@@ -98,7 +98,7 @@ export default function AboutPage() {
         <div style={{ display: "grid", gap: 10, maxWidth: 380 }}>
           <a
             className="btn btn-primary btn-lg btn-block"
-            href="https://wa.me/"
+            href="https://wa.me/message/HOF2AFIBDYY5J1"
             target="_blank"
             rel="noreferrer"
           >

@@ -130,7 +130,7 @@ export default function ProgramDetailView({
   const firstWa = properties.find((p) => p?.contact_wa)?.contact_wa ?? null
   const waHref = firstWa
     ? `https://wa.me/${firstWa.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(`Hi! I'd like to book "${program.name}".`)}`
-    : "https://wa.me/"
+    : "https://wa.me/message/HOF2AFIBDYY5J1"
 
   const variants = useMemo(
     () => program.program_variants.filter((v) => v.active).sort((a, b) => a.sort_order - b.sort_order),

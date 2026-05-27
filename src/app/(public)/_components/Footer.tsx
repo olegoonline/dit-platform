@@ -17,7 +17,7 @@ const COMPANY_LINKS = [
 ]
 
 const CONTACT_LINKS = [
-  { href: "https://wa.me/", label: "WhatsApp consult", external: true },
+  { href: "https://wa.me/message/HOF2AFIBDYY5J1", label: "WhatsApp consult", external: true },
   { href: "mailto:hello@dreamislands.org", label: "hello@dreamislands.org", external: true },
   { href: "https://instagram.com/", label: "Instagram", external: true },
   { href: "https://t.me/", label: "Telegram", external: true },
@@ -42,7 +42,7 @@ export default function Footer() {
           </p>
           <div style={{ display: "flex", gap: 10, marginTop: 22, flexWrap: "wrap" }}>
             <a
-              href="https://wa.me/"
+              href="https://wa.me/message/HOF2AFIBDYY5J1"
               target="_blank"
               rel="noreferrer"
               className="btn btn-primary"
