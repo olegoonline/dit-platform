@@ -18,16 +18,19 @@ const STATS = [
 
 const SPACES = [
   {
+    slug: "tanya-core",
     name: "Tanya Samui Holistic Health Retreat",
     tag: "The core protocol",
     body: "The main facility: accommodation, structured daily schedule, the signature Tanya Oil detox protocol, herbal cleanse solutions, and personal reviews by Teacher Khun Kob. This is where a stay begins and ends.",
   },
   {
+    slug: "tanya-wellbeing",
     name: "Tanya Wellness Center",
     tag: "À la carte spa",
     body: "Movement, mindfulness and spiritual practice: yoga, breathwork, meditation, sound healing, Reiki, and the full massage and beauty menu — bookable as standalone treatments or layered onto any program.",
   },
   {
+    slug: "bunya-clinic",
     name: "Bunya Clinic",
     tag: "Preventive medicine",
     body: "Modern diagnostics inside the retreat: doctor consultations, full blood panels, ultrasound, chiropractic and osteopathy. Medically supervised where the protocol calls for it — not a substitute for your own doctor.",
@@ -45,14 +48,33 @@ const INDICATIONS = [
 
 const FAQ_LINK_LABEL = "See all 23 answers"
 
+const GALLERY = [
+  { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/lotus-lake.jpg", caption: "Lotus Lake at dusk" },
+  { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/meditation-hall.jpg", caption: "Meditation hall" },
+  { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/swimming-pool.jpg", caption: "The pool" },
+  { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/entrance.jpg", caption: "Entrance" },
+  { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/territory.jpg", caption: "Grounds" },
+  { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/spa-zone.jpg", caption: "Morning spa" },
+  { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/tanya-oil.jpg", caption: "The Tanya Oil protocol" },
+  { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/gardens.jpg", caption: "Gardens" },
+  { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/khun-kob-monks.jpg", caption: "Teacher Khun Kob" },
+  { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/reception.jpg", caption: "Reception" },
+  { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/herbal-drink.jpg", caption: "Herbal cleanse" },
+  { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/relax-zone.jpg", caption: "Relax zone" },
+]
+
 export default async function TanyaSamuiHub() {
   const { data: propRows } = await supabaseAdmin
     .from("properties")
-    .select("id, name, description")
+    .select("id, slug, name, description, image_url")
     .in("slug", ["tanya-core", "bunya-clinic", "tanya-wellbeing"])
 
-  const descByName: Record<string, string> = {}
-  for (const p of propRows ?? []) descByName[p.name.trim()] = p.description ?? ""
+  const descBySlug: Record<string, string> = {}
+  const imageBySlug: Record<string, string | null> = {}
+  for (const p of propRows ?? []) {
+    descBySlug[p.slug] = p.description ?? ""
+    imageBySlug[p.slug] = p.image_url
+  }
 
   const { data: progRows } = await supabaseAdmin
     .from("programs")
@@ -146,13 +168,50 @@ export default async function TanyaSamuiHub() {
           </div>
         </div>
         <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
-          {SPACES.map((s) => (
-            <div key={s.name} className="card" style={{ padding: 24 }}>
-              <div className="eyebrow" style={{ marginBottom: 8 }}>{s.tag}</div>
-              <h3 style={{ margin: "0 0 10px", fontFamily: "var(--font-display)", fontWeight: 400, fontSize: 22, color: "var(--ink)" }}>
-                {s.name}
-              </h3>
-              <p className="body-sm" style={{ margin: 0 }}>{descByName[s.name] || s.body}</p>
+          {SPACES.map((s) => {
+            const img = imageBySlug[s.slug]
+            return (
+              <div key={s.slug} className="card" style={{ overflow: "hidden" }}>
+                {img && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={img} alt={s.name} style={{ width: "100%", aspectRatio: "16 / 10", objectFit: "cover", display: "block" }} />
+                )}
+                <div style={{ padding: 24 }}>
+                  <div className="eyebrow" style={{ marginBottom: 8 }}>{s.tag}</div>
+                  <h3 style={{ margin: "0 0 10px", fontFamily: "var(--font-display)", fontWeight: 400, fontSize: 22, color: "var(--ink)" }}>
+                    {s.name}
+                  </h3>
+                  <p className="body-sm" style={{ margin: 0 }}>{descBySlug[s.slug] || s.body}</p>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </section>
+
+      {/* GALLERY */}
+      <section className="shell" style={{ paddingTop: 64 }}>
+        <div className="section-head">
+          <div>
+            <div className="eyebrow" style={{ marginBottom: 8 }}>Gallery</div>
+            <h2>On the <span className="display-italic">ground</span>.</h2>
+          </div>
+        </div>
+        <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
+          {GALLERY.map((g) => (
+            <div key={g.url} style={{ position: "relative", borderRadius: 16, overflow: "hidden", aspectRatio: "4 / 3" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={g.url} alt={g.caption} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%)",
+                }}
+              />
+              <div style={{ position: "absolute", bottom: 10, left: 12, color: "#fff", fontSize: 13, fontWeight: 600 }}>
+                {g.caption}
+              </div>
             </div>
           ))}
         </div>
