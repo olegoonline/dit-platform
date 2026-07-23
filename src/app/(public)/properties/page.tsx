@@ -8,6 +8,9 @@ const COUNTRY_FLAGS: Record<string, string> = {
   China: "🇨🇳",
   Indonesia: "🇮🇩",
   Singapore: "🇸🇬",
+  Philippines: "🇵🇭",
+  Vietnam: "🇻🇳",
+  Malaysia: "🇲🇾",
 }
 
 const TRACK_NAMES: Record<number, string> = {
@@ -96,9 +99,13 @@ export default async function PropertiesPage() {
                 </div>
               )}
 
-              {prop.slug === "tanya-core" && (
+              {prop.slug === "tanya-core" ? (
                 <Link href="/tanya-samui" className="btn btn-soft" style={{ marginBottom: childrenOf(prop.id).length ? 20 : 0, display: "inline-flex" }}>
                   Explore Tanya Samui {"→"}
+                </Link>
+              ) : (
+                <Link href={`/properties/${prop.slug}`} className="btn btn-soft" style={{ marginBottom: childrenOf(prop.id).length ? 20 : 0, display: "inline-flex" }}>
+                  Explore {prop.name.trim()} {"→"}
                 </Link>
               )}
 
