@@ -96,6 +96,12 @@ export default async function PropertiesPage() {
                 </div>
               )}
 
+              {prop.slug === "tanya-core" && (
+                <Link href="/tanya-samui" className="btn btn-soft" style={{ marginBottom: childrenOf(prop.id).length ? 20 : 0, display: "inline-flex" }}>
+                  Explore Tanya Samui {"→"}
+                </Link>
+              )}
+
               {childrenOf(prop.id).length > 0 && (
                 <div
                   style={{
