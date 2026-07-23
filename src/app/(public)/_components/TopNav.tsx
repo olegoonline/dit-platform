@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -7,6 +7,7 @@ import Brand from "./Brand"
 const LINKS = [
   { href: "/", label: "Home" },
   { href: "/programs", label: "Programs" },
+  { href: "/properties", label: "Properties" },
   { href: "/start", label: "Assessment" },
   { href: "/about", label: "About" },
 ]
@@ -34,3 +35,4 @@ export default function TopNav() {
     </header>
   )
 }
+

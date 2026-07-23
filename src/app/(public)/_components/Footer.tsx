@@ -12,6 +12,7 @@ const PROGRAMS_LINKS = [
 
 const COMPANY_LINKS = [
   { href: "/about", label: "About" },
+  { href: "/properties", label: "Properties" },
   { href: "/start", label: "Wellness Baseline" },
   { href: "mailto:hello@dreamislands.org", label: "Press kit", external: true },
 ]
