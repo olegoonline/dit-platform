@@ -21,9 +21,13 @@ export default async function ReviewsPage() {
         <div className="eyebrow" style={{ color: "#AEE1C0", marginBottom: 12 }}>
           Guest reviews
         </div>
-        <h1 className="display" style={{ color: "#fff", margin: "0 0 48px" }}>
+        <h1 className="display" style={{ color: "#fff", margin: "0 0 20px" }}>
           Guest Stories
         </h1>
+        <p className="body-lg" style={{ color: "rgba(255,255,255,.75)", marginBottom: 40, maxWidth: 640 }}>
+          We measure outcomes, not just satisfaction — these are real guests, matched by goal,
+          describing what actually changed before, during and after their stay.
+        </p>
         <div
           style={{
             display: "grid",

@@ -56,8 +56,9 @@ export default async function PropertiesPage() {
           Where the <span className="display-italic">work happens</span>.
         </h1>
         <p className="body-lg" style={{ marginBottom: 40, maxWidth: 760 }}>
-          Every program on Dream Islands is delivered through a real property, clinic or center on
-          the ground. This is the full list — where each one is, what it does, and what it's part of.
+          Every program on Dream Islands is delivered through a real, curated property, clinic or
+          center on the ground — not a generic listing. This is the full destination directory:
+          where each one is, what it does, and what it's part of.
         </p>
 
         <div style={{ display: "grid", gap: 20 }}>

@@ -37,10 +37,14 @@ export default function ProgramsListView({
         <div className="eyebrow" style={{ marginBottom: 10 }}>All programs</div>
         <h1
           className="display"
-          style={{ fontSize: "clamp(40px, 10vw, 72px)", margin: "0 0 24px", color: "var(--ink)" }}
+          style={{ fontSize: "clamp(40px, 10vw, 72px)", margin: "0 0 16px", color: "var(--ink)" }}
         >
           Best <span className="display-italic">trips</span> for you.
         </h1>
+        <p className="body-lg" style={{ marginBottom: 28, maxWidth: 640 }}>
+          Every program here is matched to a goal, not a place — detox, performance, calm or
+          longevity — and tracked from baseline to outcome, not just booked and forgotten.
+        </p>
 
         <div
           style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 8, marginBottom: 12 }}

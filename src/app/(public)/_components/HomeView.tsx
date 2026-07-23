@@ -27,7 +27,7 @@ export default function HomeView({ programs, reviews }: { programs: LandingProgr
         <div style={{ display: "grid", gap: 28 }} className="hero-grid">
           <div className="rise rise-1">
             <div className="eyebrow" style={{ marginBottom: 18 }}>
-              Wellness travel · Southeast Asia
+              Outcome-driven wellness travel · Southeast Asia
             </div>
             <h1
               className="display"
@@ -37,8 +37,9 @@ export default function HomeView({ programs, reviews }: { programs: LandingProgr
               <span className="display-italic" style={{ color: "var(--accent)" }}>a place</span>.
             </h1>
             <p className="body-lg" style={{ marginTop: 22, maxWidth: 460 }}>
-              We score your wellbeing across movement, recovery, lifestyle and emotional health ·
-              then match you to a retreat that actually moves the number.
+              We start from your goal, not a destination — score your wellbeing across movement,
+              recovery, lifestyle and emotional health, then match you to a retreat that actually
+              moves the number.
             </p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 28 }}>
               <Link href="/start" className="btn btn-primary btn-lg">
