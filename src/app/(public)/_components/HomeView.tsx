@@ -27,7 +27,7 @@ export default function HomeView({ programs, reviews }: { programs: LandingProgr
         <div style={{ display: "grid", gap: 28 }} className="hero-grid">
           <div className="rise rise-1">
             <div className="eyebrow" style={{ marginBottom: 18 }}>
-              Wellness travel ? Southeast Asia
+              Wellness travel · Southeast Asia
             </div>
             <h1
               className="display"
@@ -37,7 +37,7 @@ export default function HomeView({ programs, reviews }: { programs: LandingProgr
               <span className="display-italic" style={{ color: "var(--accent)" }}>a place</span>.
             </h1>
             <p className="body-lg" style={{ marginTop: 22, maxWidth: 460 }}>
-              We score your wellbeing across movement, recovery, lifestyle and emotional health ?
+              We score your wellbeing across movement, recovery, lifestyle and emotional health ·
               then match you to a retreat that actually moves the number.
             </p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 28 }}>
@@ -50,7 +50,7 @@ export default function HomeView({ programs, reviews }: { programs: LandingProgr
               </Link>
             </div>
             <div style={{ display: "flex", gap: 24, marginTop: 32, color: "var(--ink-3)", fontSize: 13 }}>
-              <Stat n="22" sub="questions ? 5 min" />
+              <Stat n="22" sub="questions · 5 min" />
               <Stat n={String(programs.length)} sub="matched programs" />
               <Stat n="0" sub="sales pressure" />
             </div>
@@ -84,7 +84,7 @@ export default function HomeView({ programs, reviews }: { programs: LandingProgr
                       {featured.name}
                     </div>
                     <div className="body-sm">
-                      {featured.flag} {featured.location} ? {featured.duration}
+                      {featured.flag} {featured.location} · {featured.duration}
                     </div>
                   </div>
                   {featured.slug && (
