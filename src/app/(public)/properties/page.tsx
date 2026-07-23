@@ -27,12 +27,13 @@ type PropertyRow = {
   cohort_tags: number[] | null
   certified: boolean
   description: string | null
+  image_url: string | null
 }
 
 export default async function PropertiesPage() {
   const { data: rows } = await supabaseAdmin
     .from("properties")
-    .select("id, name, slug, parent_id, island, country, cohort_tags, certified, description")
+    .select("id, name, slug, parent_id, island, country, cohort_tags, certified, description, image_url")
     .eq("active", true)
     .neq("name", "")
     .order("name")
@@ -58,7 +59,16 @@ export default async function PropertiesPage() {
 
         <div style={{ display: "grid", gap: 20 }}>
           {topLevel.map((prop) => (
-            <div key={prop.id} className="card" style={{ padding: 28 }}>
+            <div key={prop.id} className="card" style={{ overflow: "hidden" }}>
+              {prop.image_url && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={prop.image_url}
+                  alt={prop.name.trim()}
+                  style={{ width: "100%", aspectRatio: "16 / 7", objectFit: "cover", display: "block" }}
+                />
+              )}
+              <div style={{ padding: 28 }}>
               <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline", gap: 10, marginBottom: 10 }}>
                 <h2 style={{ margin: 0, fontFamily: "var(--font-display)", fontWeight: 400, fontSize: 28, color: "var(--ink)" }}>
                   {prop.name.trim()}
@@ -109,6 +119,7 @@ export default async function PropertiesPage() {
                   ))}
                 </div>
               )}
+              </div>
             </div>
           ))}
         </div>
@@ -122,4 +133,5 @@ export default async function PropertiesPage() {
     </div>
   )
 }
+
 
