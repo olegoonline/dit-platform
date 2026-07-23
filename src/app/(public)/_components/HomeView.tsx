@@ -141,7 +141,7 @@ export default function HomeView({ programs, reviews }: { programs: LandingProgr
       </section>
 
       {/* TRACKS */}
-      <section className="shell">
+      <section id="tracks" className="shell" style={{ scrollMarginTop: 90 }}>
         <div className="section-head">
           <div>
             <div className="eyebrow" style={{ marginBottom: 8 }}>Four tracks</div>

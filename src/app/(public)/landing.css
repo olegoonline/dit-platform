@@ -124,7 +124,11 @@ body {
 }
 .topnav-links {
   display: none;
-  gap: 28px;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+@media (min-width: 1150px) {
+  .topnav-links { gap: 26px; }
 }
 @media (min-width: 900px) {
   .topnav-links { display: flex; }
@@ -376,6 +380,20 @@ body {
   margin: 48px auto 0;
   padding-top: 32px;
   border-top: 1px solid var(--line-2);
+}
+.footer-legal {
+  max-width: 1200px;
+  margin: 32px auto 0;
+  padding-top: 32px;
+  border-top: 1px solid var(--line-2);
+}
+.footer-legal-grid {
+  display: grid;
+  gap: 28px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 800px) {
+  .footer-legal-grid { grid-template-columns: repeat(3, 1fr); }
 }
 .footer-bottom {
   max-width: 1200px;
