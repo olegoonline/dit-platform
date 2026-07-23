@@ -5,6 +5,13 @@ import ProgramCard from "./ProgramCard"
 import ProgramImage from "./ProgramImage"
 import ReviewsSection, { type Review } from "./ReviewsSection"
 
+const TRACK_ICONS = {
+  Reset: "/icons/leaf.png",
+  Performance: "/icons/pulse.png",
+  Mind: "/icons/mindfulness.png",
+  Immersion: "/icons/compass.png",
+} as const
+
 export default function HomeView({ programs, reviews }: { programs: LandingProgram[]; reviews: Review[] }) {
   const featured = programs[0]
   const firstWa = programs.find((p) => p.contact_wa)?.contact_wa ?? null
@@ -147,6 +154,7 @@ export default function HomeView({ programs, reviews }: { programs: LandingProgr
           {TRACKS.map((t, i) => {
             const color = COHORT_LABELS[t.cohort]?.color ?? "var(--accent)"
             const num = String(i + 1).padStart(2, "0")
+            const trackIcon = TRACK_ICONS[t.id as keyof typeof TRACK_ICONS]
             return (
               <Link
                 key={t.id}
@@ -193,6 +201,16 @@ export default function HomeView({ programs, reviews }: { programs: LandingProgr
                   <span aria-hidden="true" style={{ width: 10, height: 10, borderRadius: "50%", background: color, marginTop: 12 }} />
                 </div>
                 <div>
+                  {trackIcon && (
+                    <img
+                      src={trackIcon}
+                      alt=""
+                      aria-hidden="true"
+                      width={32}
+                      height={32}
+                      style={{ marginBottom: 10, opacity: 0.9 }}
+                    />
+                  )}
                   <div
                     style={{
                       fontFamily: "var(--font-display)",
@@ -332,3 +350,4 @@ function Stat({ n, sub }: { n: string; sub: string }) {
     </div>
   )
 }
+

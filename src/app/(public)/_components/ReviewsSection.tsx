@@ -37,7 +37,7 @@ export function ReviewCard({ review: r }: { review: Review }) {
         <div style={{ fontWeight: 600, fontSize: 14, color: "#fff" }}>{name}</div>
         {(title || r.country) && (
           <div style={{ fontSize: 12, color: "rgba(255,255,255,.5)", marginTop: 2 }}>
-            {[title, r.country].filter(Boolean).join(" ? ")}
+            {[title, r.country].filter(Boolean).join(" · ")}
           </div>
         )}
       </div>
@@ -87,7 +87,7 @@ export default function ReviewsSection({ reviews }: { reviews: Review[] }) {
               alignSelf: "flex-end",
             }}
           >
-            Read all stories ?
+            Read all stories →
           </a>
         </div>
         <div

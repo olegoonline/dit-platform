@@ -1,7 +1,8 @@
-/* Dream Islands — Botanical Luxe design tokens & global styles.
-   Adapted from handoff styles.css. Single theme (Botanical), no toggles. */
+﻿/* Dream Islands ? Ecosystem Dark design tokens & global styles.
+   Retargeted to Tanya Samui's live palette (tanyasamui.ru css/style.css).
+   Single theme (dark), no toggles. */
 
-/* ─── Base reset (extends globals.css) ─── */
+/* ??? Base reset (extends globals.css) ??? */
 html, body { background: var(--bg); color: var(--ink); }
 body {
   font-family: var(--font-body);
@@ -10,57 +11,57 @@ body {
   overflow-x: hidden;
 }
 
-/* ─── Botanical Luxe tokens ─── */
+/* ??? Ecosystem Dark tokens ??? */
 :root {
   /* surfaces */
-  --bg:           #F6F1E8;
-  --surface:      #FBF8F2;
-  --surface-2:    #FFFFFF;
-  --surface-inv:  #14201B;
-  --line:         rgba(20,32,27,.10);
-  --line-2:       rgba(20,32,27,.06);
+  --bg:           #1C262A;
+  --surface:      #202A2E;
+  --surface-2:    #2C3336;
+  --surface-inv:  #F6F1E8;
+  --line:         rgba(255,255,255,.09);
+  --line-2:       rgba(255,255,255,.06);
 
   /* ink */
-  --ink:          #14201B;
-  --ink-2:        #3A4A41;
-  --ink-3:        rgba(20,32,27,.55);
-  --ink-inv:      #F6F1E8;
+  --ink:          #F5F6F5;
+  --ink-2:        #D3D2D2;
+  --ink-3:        rgba(211,210,210,.55);
+  --ink-inv:      #14201B;
 
   /* accent */
-  --accent:       #2F8F6E;
-  --accent-soft:  #C8E8D8;
-  --accent-deep:  #1B5A45;
-  --accent-ink:   #FFFFFF;
+  --accent:       #AEE1C0;
+  --accent-soft:  rgba(174,225,192,.15);
+  --accent-deep:  #7DBE99;
+  --accent-ink:   #14201B;
 
   /* track colors (per cohort) */
-  --reset:        #2F8F6E;
-  --longevity:    #C77A3D;
-  --aesthetic:    #B8617E;
-  --sleep:        #4A6FA5;
-  --lean:         #7A8A3C;
+  --reset:        #7DD3AE;
+  --longevity:    #D99A5B;
+  --aesthetic:    #D586A3;
+  --sleep:        #6D96C7;
+  --lean:         #9CAE5C;
 
-  /* type — provided by next/font as CSS variables in layout */
+  /* type ? provided by next/font as CSS variables in layout */
   --font-mono:    "JetBrains Mono", ui-monospace, monospace;
 
   /* spacing & shape */
-  --r-sm: 10px;
-  --r-md: 18px;
-  --r-lg: 26px;
-  --r-xl: 32px;
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 24px;
   --r-pill: 999px;
   --pad: 20px;
   --gap: 16px;
-  --shadow-1: 0 1px 2px rgba(20,32,27,.05);
-  --shadow-2: 0 6px 24px -8px rgba(20,32,27,.16), 0 1px 2px rgba(20,32,27,.06);
-  --shadow-3: 0 24px 56px -16px rgba(20,32,27,.25);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.20);
+  --shadow-2: 0 6px 24px -8px rgba(0,0,0,.45), 0 1px 2px rgba(0,0,0,.3);
+  --shadow-3: 0 24px 56px -16px rgba(0,0,0,.55);
 
-  /* card style — shadow by default */
+  /* card style ? shadow by default */
   --card-bg:      var(--surface-2);
   --card-border:  1px solid var(--line-2);
   --card-shadow:  var(--shadow-2);
 }
 
-/* ─── Typography classes ─── */
+/* ??? Typography classes ??? */
 .display {
   font-family: var(--font-display);
   font-weight: 400;
@@ -81,7 +82,7 @@ body {
 .body    { font-size: 15px; line-height: 1.5; color: var(--ink-2); }
 .body-sm { font-size: 13px; line-height: 1.45; color: var(--ink-3); }
 
-/* ─── Layout helpers ─── */
+/* ??? Layout helpers ??? */
 .page { min-height: 100dvh; background: var(--bg); padding-top: env(safe-area-inset-top); }
 .shell {
   max-width: 480px;
@@ -93,12 +94,12 @@ body {
   .shell { max-width: 1200px; padding: 0 48px; }
 }
 
-/* Page-specific in-page header — hidden on desktop since topnav covers it */
+/* Page-specific in-page header ? hidden on desktop since topnav covers it */
 @media (min-width: 900px) {
   .page-header { display: none !important; }
 }
 
-/* ─── Top nav (sticky, mobile + desktop) ─── */
+/* ??? Top nav (sticky, mobile + desktop) ??? */
 .topnav {
   position: sticky;
   top: 0;
@@ -139,7 +140,7 @@ body {
   .topnav-cta { padding: 12px 20px; font-size: 14px; }
 }
 
-/* ─── Brand mark ─── */
+/* ??? Brand mark ??? */
 .brand {
   display: inline-flex;
   align-items: center;
@@ -159,7 +160,7 @@ body {
   color: var(--accent);
 }
 
-/* ─── Buttons ─── */
+/* ??? Buttons ??? */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -194,7 +195,7 @@ body {
 .btn-block { width: 100%; }
 .btn-lg { padding: 20px 26px; font-size: 16px; }
 
-/* ─── Card ─── */
+/* ??? Card ??? */
 .card {
   background: var(--card-bg);
   border: var(--card-border);
@@ -203,7 +204,7 @@ body {
   overflow: hidden;
 }
 
-/* ─── Tag ─── */
+/* ??? Tag ??? */
 .tag {
   display: inline-flex;
   align-items: center;
@@ -218,7 +219,7 @@ body {
 }
 .tag-outline { background: transparent; border: 1px solid var(--line); color: var(--ink-2); }
 
-/* ─── Chat bubble (assessment style) ─── */
+/* ??? Chat bubble (assessment style) ??? */
 .bubble {
   max-width: 80%;
   padding: 12px 16px;
@@ -241,7 +242,7 @@ body {
   align-self: flex-end;
 }
 
-/* ─── Section header ─── */
+/* ??? Section header ??? */
 .section-head {
   display: flex;
   align-items: baseline;
@@ -260,7 +261,7 @@ body {
 }
 @media (min-width: 900px) { .section-head h2 { font-size: 56px; } }
 
-/* ─── Floating WhatsApp button ─── */
+/* ??? Floating WhatsApp button ??? */
 .fab-wa {
   position: fixed;
   bottom: 24px;
@@ -281,7 +282,7 @@ body {
   .fab-wa { bottom: 24px; right: 24px; }
 }
 
-/* ─── Decorative blob ─── */
+/* ??? Decorative blob ??? */
 .blob {
   position: absolute;
   border-radius: 50%;
@@ -291,7 +292,7 @@ body {
   z-index: 0;
 }
 
-/* ─── Hero image frame ─── */
+/* ??? Hero image frame ??? */
 .hero-image {
   position: relative;
   width: 100%;
@@ -306,7 +307,7 @@ body {
   object-fit: cover;
 }
 
-/* ─── Subtle entry animations ─── */
+/* ??? Subtle entry animations ??? */
 @keyframes rise {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
@@ -317,7 +318,7 @@ body {
 .rise-3 { animation-delay: .25s; }
 .rise-4 { animation-delay: .35s; }
 
-/* ─── Scrollable program rail ─── */
+/* ??? Scrollable program rail ??? */
 .rail {
   display: flex;
   gap: var(--gap);
@@ -331,7 +332,7 @@ body {
 .rail::-webkit-scrollbar { display: none; }
 .rail > * { scroll-snap-align: start; flex: 0 0 auto; }
 
-/* ─── Site footer ─── */
+/* ??? Site footer ??? */
 .site-footer {
   background: var(--surface);
   border-top: 1px solid var(--line);
@@ -388,7 +389,7 @@ body {
   color: var(--ink-3);
 }
 
-/* ─── Form field ─── */
+/* ??? Form field ??? */
 .field {
   appearance: none;
   width: 100%;
@@ -407,3 +408,4 @@ body {
   box-shadow: 0 0 0 3px var(--accent-soft);
 }
 .field::placeholder { color: var(--ink-3); }
+
