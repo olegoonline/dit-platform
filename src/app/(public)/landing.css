@@ -1,8 +1,9 @@
-﻿/* Dream Islands ? Ecosystem Dark design tokens & global styles.
-   Retargeted to Tanya Samui's live palette (tanyasamui.ru css/style.css).
+﻿/* Dream Islands brand tokens & global styles.
+   Locked to brand spec: bg #1C262A, panels #2C3336, mint #AEE1C0,
+   text #D3D2D2 / #FFFFFF, fonts Optima + Aeroport.
    Single theme (dark), no toggles. */
 
-/* ??? Base reset (extends globals.css) ??? */
+/* --- Base reset (extends globals.css) --- */
 html, body { background: var(--bg); color: var(--ink); }
 body {
   font-family: var(--font-body);
@@ -11,21 +12,19 @@ body {
   overflow-x: hidden;
 }
 
-/* ??? Ecosystem Dark tokens ??? */
+/* --- Brand tokens --- */
 :root {
   /* surfaces */
   --bg:           #1C262A;
-  --surface:      #202A2E;
+  --surface:      #1C262A;
   --surface-2:    #2C3336;
-  --surface-inv:  #F6F1E8;
   --line:         rgba(255,255,255,.09);
   --line-2:       rgba(255,255,255,.06);
 
   /* ink */
-  --ink:          #F5F6F5;
+  --ink:          #FFFFFF;
   --ink-2:        #D3D2D2;
   --ink-3:        rgba(211,210,210,.55);
-  --ink-inv:      #14201B;
 
   /* accent */
   --accent:       #AEE1C0;
@@ -40,7 +39,9 @@ body {
   --sleep:        #6D96C7;
   --lean:         #9CAE5C;
 
-  /* type ? provided by next/font as CSS variables in layout */
+  /* type */
+  --font-display: 'Optima', 'Palatino Linotype', 'Book Antiqua', serif;
+  --font-body:    'Aeroport', var(--font-dmsans), -apple-system, 'Segoe UI', sans-serif;
   --font-mono:    "JetBrains Mono", ui-monospace, monospace;
 
   /* spacing & shape */

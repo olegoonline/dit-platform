@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from "next/server"
+﻿import { NextResponse, type NextRequest } from "next/server"
 import { createServerClient } from "@supabase/ssr"
 
 const PUBLIC_PATHS = [
@@ -8,6 +8,7 @@ const PUBLIC_PATHS = [
   "/matched",
   "/programs",
   "/properties",
+  "/reviews",
   "/about",
   "/auth/callback",
   "/api/intake",
@@ -24,6 +25,7 @@ const PUBLIC_HOST_ALLOWED = [
   "/matched",
   "/programs",
   "/properties",
+  "/reviews",
   "/about",
   "/api/intake",
   "/api/programs",

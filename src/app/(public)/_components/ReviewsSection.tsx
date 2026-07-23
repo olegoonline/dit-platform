@@ -1,4 +1,4 @@
-﻿export type Review = {
+export type Review = {
   id: string
   guest_name: string
   guest_title: string | null
@@ -8,15 +8,25 @@
   featured: boolean
 }
 
+const CYRILLIC_RE = /[Ѐ-ӿ]/
+
+// Bilingual fields are stored as "A / B" with inconsistent language order
+// (some rows are "RU / EN", others "EN / RU"). Pick whichever side has no
+// Cyrillic rather than assuming a fixed position.
 function enOnly(s: string | null | undefined): string | null {
   if (!s) return null
-  const parts = s.split(" / ")
-  return parts.length > 1 ? (parts[1].trim() || parts[0].trim()) : s.trim()
+  const parts = s.split(" / ").map((p) => p.trim()).filter(Boolean)
+  if (parts.length > 1) {
+    const clean = parts.find((p) => !CYRILLIC_RE.test(p))
+    if (clean) return clean
+  }
+  return s.trim()
 }
 
 export function ReviewCard({ review: r }: { review: Review }) {
   const name = enOnly(r.guest_name) ?? r.guest_name
   const title = enOnly(r.guest_title)
+  const country = enOnly(r.country)
 
   return (
     <article
@@ -35,9 +45,9 @@ export function ReviewCard({ review: r }: { review: Review }) {
       </p>
       <div style={{ marginTop: "auto", paddingTop: 12, borderTop: "1px solid rgba(255,255,255,.08)" }}>
         <div style={{ fontWeight: 600, fontSize: 14, color: "#fff" }}>{name}</div>
-        {(title || r.country) && (
+        {(title || country) && (
           <div style={{ fontSize: 12, color: "rgba(255,255,255,.5)", marginTop: 2 }}>
-            {[title, r.country].filter(Boolean).join(" · ")}
+            {[title, country].filter(Boolean).join(" · ")}
           </div>
         )}
       </div>
@@ -87,7 +97,7 @@ export default function ReviewsSection({ reviews }: { reviews: Review[] }) {
               alignSelf: "flex-end",
             }}
           >
-            Read all stories →
+            Read all stories {"→"}
           </a>
         </div>
         <div

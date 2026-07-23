@@ -42,7 +42,7 @@ export default async function ReviewsPage() {
         </div>
         <div style={{ marginTop: 48 }}>
           <Link href="/" style={{ color: "#AEE1C0", fontSize: 14 }}>
-            ? Back to home
+            {"←"} Back to home
           </Link>
         </div>
       </div>

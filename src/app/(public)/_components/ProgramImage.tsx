@@ -1,10 +1,10 @@
 import { Icon } from "./Icon"
 
 const COHORT_GRADIENT: Record<number, string> = {
-  1: "linear-gradient(135deg, #C8E8D8 0%, #2F8F6E 100%)",
-  2: "linear-gradient(135deg, #DFE4C7 0%, #7A8A3C 100%)",
-  3: "linear-gradient(135deg, #CBD9EE 0%, #4A6FA5 100%)",
-  4: "linear-gradient(135deg, #C8E8D8 0%, #1B5A45 100%)",
+  1: "linear-gradient(135deg, #2C3336 0%, #1B5A45 100%)",
+  2: "linear-gradient(135deg, #2C3336 0%, #7A6A2E 100%)",
+  3: "linear-gradient(135deg, #2C3336 0%, #6B3F52 100%)",
+  4: "linear-gradient(135deg, #2C3336 0%, #2F4A66 100%)",
 }
 
 export default function ProgramImage({
@@ -39,7 +39,7 @@ export default function ProgramImage({
         background: COHORT_GRADIENT[cohort] ?? COHORT_GRADIENT[1],
         display: "grid",
         placeItems: "center",
-        color: "rgba(255,255,255,0.65)",
+        color: "rgba(174,225,192,0.55)",
       }}
     >
       <Icon.flower width="42%" height="42%" />
