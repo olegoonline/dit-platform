@@ -93,7 +93,7 @@ export default function AboutPage() {
           Talk to us <span className="display-italic">directly</span>.
         </h2>
         <p className="body" style={{ marginBottom: 20 }}>
-          We&apos;ll WhatsApp you within one business day. No spam, no list resale.
+          We&apos;ll WhatsApp you within a few minutes. No spam, no list resale.
         </p>
         <div style={{ display: "grid", gap: 10, maxWidth: 380 }}>
           <a

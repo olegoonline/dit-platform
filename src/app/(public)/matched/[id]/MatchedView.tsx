@@ -110,7 +110,7 @@ export default function MatchedView({
       const json = await res.json()
       if (!res.ok || !json.success) { setSubmitError(json.error ?? "Could not save inquiry"); return }
       setReservedIds((s) => new Set(s).add(reserveTarget.id))
-      setSubmitOk(`Inquiry sent for ${reserveTarget.name}. We'll WhatsApp you within one business day.`)
+      setSubmitOk(`Inquiry sent for ${reserveTarget.name}. We'll WhatsApp you within a few minutes.`)
       setReserveTarget(null)
     } finally {
       setSubmitting(false)

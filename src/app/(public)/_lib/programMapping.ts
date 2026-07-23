@@ -28,7 +28,7 @@ export const HOW_IT_WORKS = [
   },
   {
     n: "03",
-    title: "We WhatsApp you within a day",
+    title: "We WhatsApp you within minutes",
     body: "Real humans confirm dates, run pre-arrival prep, and stay with you through the protocol.",
   },
 ] as const
