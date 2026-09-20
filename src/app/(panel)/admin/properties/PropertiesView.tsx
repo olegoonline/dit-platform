@@ -21,6 +21,7 @@ import {
   Typography,
 } from "antd"
 import type { ColumnsType } from "antd/es/table"
+import { rowNav } from "../../_components/rowNav"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -216,6 +217,7 @@ export default function PropertiesView({
           columns={columns}
           dataSource={rows}
           pagination={false}
+          onRow={(r) => rowNav(() => router.push(`/admin/properties/${r.id}`))}
           locale={{ emptyText: <Empty description="No properties yet" /> }}
         />
       </Card>

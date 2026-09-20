@@ -23,6 +23,7 @@ import {
   Typography,
 } from "antd"
 import type { ColumnsType } from "antd/es/table"
+import { rowNav } from "../../_components/rowNav"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -30,6 +31,15 @@ import { DIT_EMAIL, DIT_WHATSAPP_URL } from "@/lib/contact"
 
 const { Text, Title } = Typography
 const { TextArea } = Input
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+// Fixed format on purpose: the runtime default locale differs between the
+// server render and the browser, which breaks hydration.
+function fmtDay(v: string): string {
+  const d = new Date(v)
+  return `${String(d.getDate()).padStart(2, "0")} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`
+}
 
 export type PartnerPropertyRow = {
   id: string
@@ -187,7 +197,7 @@ export default function PartnerPropertiesView({
       key: "created_at",
       width: 140,
       render: (v: string) => (
-        <Text type="secondary">{new Date(v).toLocaleDateString()}</Text>
+        <Text type="secondary">{fmtDay(v)}</Text>
       ),
     },
     {
@@ -223,6 +233,7 @@ export default function PartnerPropertiesView({
           columns={columns}
           dataSource={rows}
           pagination={false}
+          onRow={(r) => rowNav(() => router.push(`/partner/properties/${r.id}`))}
           locale={{ emptyText: <Empty description="No properties linked to your account yet" /> }}
         />
       </Card>

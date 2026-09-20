@@ -10,16 +10,16 @@ import { getSessionUser } from "@/lib/auth"
 
 const navItems: NavItem[] = [
   {
-    key: "/partner",
-    href: "/partner",
-    icon: <AppstoreOutlined />,
-    label: "Programs",
-  },
-  {
     key: "/partner/properties",
     href: "/partner/properties",
     icon: <EnvironmentOutlined />,
     label: "Properties",
+  },
+  {
+    key: "/partner",
+    href: "/partner",
+    icon: <AppstoreOutlined />,
+    label: "Programs",
   },
   {
     key: "/partner/guests",

@@ -15,6 +15,7 @@ import {
   Typography,
 } from "antd"
 import type { ColumnsType } from "antd/es/table"
+import { rowNav } from "../../_components/rowNav"
 import {
   EditOutlined,
   PlusOutlined,
@@ -293,6 +294,7 @@ export default function SpecialistsView({
           columns={manageColumns}
           dataSource={specialists}
           pagination={false}
+          onRow={(r) => rowNav(() => router.push(`/partner/specialists/${r.id}`))}
           size="middle"
           locale={{ emptyText: "No specialists yet — add the first one" }}
         />
@@ -304,6 +306,7 @@ export default function SpecialistsView({
           columns={contribColumns}
           dataSource={rows}
           pagination={false}
+          onRow={(r) => rowNav(() => router.push(`/partner/specialists/${r.specialist_id}`))}
           size="middle"
           locale={{ emptyText: "No outcomes recorded yet" }}
         />
