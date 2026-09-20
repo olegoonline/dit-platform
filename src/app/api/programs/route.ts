@@ -81,12 +81,12 @@ export async function GET(req: Request) {
     q = q.eq("status", "published").eq("active", true)
   }
 
-  // Partner scope: restrict to programs linked to the partner's property.
-  if (me?.role === "partner" && me.partner_property_id) {
+  // Partner scope: restrict to programs linked to any of the partner's properties.
+  if (me?.role === "partner" && me.partner_property_ids.length > 0) {
     const { data: links } = await supabaseAdmin
       .from("program_properties")
       .select("program_id")
-      .eq("property_id", me.partner_property_id)
+      .in("property_id", me.partner_property_ids)
     const ids = (links ?? []).map((l) => l.program_id as string)
     if (ids.length === 0) {
       return NextResponse.json({ success: true, programs: [] }, { headers: cors })

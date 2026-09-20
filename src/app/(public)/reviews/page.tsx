@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic"
 export default async function ReviewsPage() {
   const { data } = await supabaseAdmin
     .from("reviews")
-    .select("*")
+    .select("*, programs(name, slug)")
     .eq("status", "published")
     .in("visibility", ["both", "en"])
     .order("featured", { ascending: false })
@@ -15,8 +15,53 @@ export default async function ReviewsPage() {
 
   const reviews = (data ?? []) as Review[]
 
+  const ratedReviews = (data ?? []).filter((r: any) => typeof r.rating === "number")
+  const avgRating =
+    ratedReviews.length > 0
+      ? ratedReviews.reduce((sum: number, r: any) => sum + r.rating, 0) / ratedReviews.length
+      : null
+
+  const jsonLd =
+    ratedReviews.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Dream Islands",
+          url: "https://dreamislands.org",
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: Math.round(avgRating! * 100) / 100,
+            reviewCount: ratedReviews.length,
+            bestRating: 5,
+            worstRating: 1,
+          },
+          review: ratedReviews.slice(0, 30).map((r: any) => {
+            const prog = Array.isArray(r.programs) ? r.programs[0] : r.programs
+            return {
+              "@type": "Review",
+              author: { "@type": "Person", name: r.guest_name || "Guest" },
+              reviewRating: {
+                "@type": "Rating",
+                ratingValue: r.rating,
+                bestRating: 5,
+                worstRating: 1,
+              },
+              ...(r.text_en || r.text_ru ? { reviewBody: r.text_en || r.text_ru } : {}),
+              ...(r.created_at ? { datePublished: String(r.created_at).slice(0, 10) } : {}),
+              ...(prog?.name ? { itemReviewed: { "@type": "Product", name: prog.name } } : {}),
+            }
+          }),
+        }
+      : null
+
   return (
     <div style={{ background: "#1C262A", minHeight: "100vh", paddingBottom: 80 }}>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
       <div className="shell" style={{ paddingTop: 64, paddingBottom: 48 }}>
         <div className="eyebrow" style={{ color: "#AEE1C0", marginBottom: 12 }}>
           Guest reviews

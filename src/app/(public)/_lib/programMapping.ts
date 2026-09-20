@@ -1,9 +1,21 @@
 // Mapping layer between Supabase `programs` rows and the LandingProgram shape
 // the design components expect. Lives only on the public side.
 
+import { COUNTRY_FLAGS } from "./countries"
+
+const OUTCOME_ICON_RULES: Array<[string, string]> = [["energy", "energy"], ["sleep", "sleep"], ["stress", "stress"], ["calm", "stress"], ["relax", "stress"], ["weight", "weight"], ["anti-aging", "ageing"], ["longevity", "longevity"], ["inflammation", "inflammation"], ["clarity", "clarity"], ["mental reset", "clarity"], ["gut", "digestion"], ["digest", "digestion"]]
+
+export function outcomeIcon(tag: string): string | null {
+  const t = tag.toLowerCase()
+  for (const [keyword, icon] of OUTCOME_ICON_RULES) {
+    if (t.includes(keyword)) return icon
+  }
+  return null
+}
+
 export const COHORT_LABELS: Record<number, { name: string; tagline: string; color: string }> = {
   1: { name: "Reset", tagline: "Detox & recovery", color: "var(--reset)" },
-  2: { name: "Performance", tagline: "Energy & fitness", color: "var(--lean)" },
+  2: { name: "Performance", tagline: "Energy & fitness", color: "var(--accent)" },
   3: { name: "Mind", tagline: "Clarity & calm", color: "var(--sleep)" },
   4: { name: "Immersion", tagline: "Deep transformation", color: "var(--accent)" },
 }
@@ -33,15 +45,6 @@ export const HOW_IT_WORKS = [
   },
 ] as const
 
-const COUNTRY_FLAGS: Record<string, string> = {
-  Indonesia: "🇮🇩",
-  Thailand: "🇹🇭",
-  Singapore: "🇸🇬",
-  Malaysia: "🇲🇾",
-  Vietnam: "🇻🇳",
-  Philippines: "🇵🇭",
-}
-
 export type DbProperty = {
   id: string
   name: string
@@ -70,6 +73,8 @@ export type DbProgramRow = {
   outcomes: string[] | null
   is_composite: boolean
   hero_image_url: string | null
+  performance_subtype_id: number | null
+  performance_subtypes: { code: string; label: string; sort_order: number } | null
   program_properties: Array<{ role: string | null; properties: DbProperty }>
   program_variants: DbVariant[]
 }
@@ -82,6 +87,7 @@ export type LandingProgram = {
   track: string
   cohort: number
   trackColor: string
+  performanceSubtype: { code: string; label: string } | null
   tier: string | null
   type: "Composite" | "Rebuild"
   duration: string
@@ -89,12 +95,16 @@ export type LandingProgram = {
   tags: string[]
   location: string
   flag: string
+  country: string | null
   hero_image_url: string | null
   contact_wa: string | null
 }
 
 export function mapProgram(row: DbProgramRow): LandingProgram {
   const cohort = COHORT_LABELS[row.cohort] ?? { name: "Reset", tagline: "", color: "var(--accent)" }
+  const performanceSubtype = row.performance_subtypes
+    ? { code: row.performance_subtypes.code, label: row.performance_subtypes.label }
+    : null
   const variants = (row.program_variants ?? []).filter((v) => v.active)
 
   const days = variants.map((v) => v.duration_days).filter((n) => n > 0)
@@ -126,6 +136,7 @@ export function mapProgram(row: DbProgramRow): LandingProgram {
     track: cohort.name,
     cohort: row.cohort,
     trackColor: cohort.color,
+    performanceSubtype,
     tier: row.tier,
     type: row.is_composite ? "Composite" : "Rebuild",
     duration,
@@ -133,6 +144,7 @@ export function mapProgram(row: DbProgramRow): LandingProgram {
     tags: row.outcomes ?? [],
     location,
     flag,
+    country: firstProp?.country ?? null,
     hero_image_url: row.hero_image_url,
     contact_wa,
   }

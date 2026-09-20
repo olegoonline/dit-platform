@@ -1,9 +1,11 @@
 ﻿import Link from "next/link"
 import { COHORT_LABELS, HOW_IT_WORKS, TRACKS, type LandingProgram } from "../_lib/programMapping"
+import Image from "next/image"
 import { Icon } from "./Icon"
 import ProgramCard from "./ProgramCard"
 import ProgramImage from "./ProgramImage"
 import ReviewsSection, { type Review } from "./ReviewsSection"
+import ReserveModal from "./ReserveModal"
 
 const TRACK_ICONS = {
   Reset: "/icons/leaf.png",
@@ -49,6 +51,11 @@ export default function HomeView({ programs, reviews }: { programs: LandingProgr
               <Link href="/programs" className="btn btn-ghost btn-lg">
                 Browse programs
               </Link>
+              <ReserveModal
+                programs={programs.map((p) => ({ id: p.id, name: p.name }))}
+                triggerLabel="Reserve dates"
+                triggerClassName="btn btn-ghost btn-lg"
+              />
             </div>
             <div style={{ display: "flex", gap: 24, marginTop: 32, color: "var(--ink-3)", fontSize: 13 }}>
               <Stat n="22" sub="questions · 5 min" />
@@ -100,6 +107,8 @@ export default function HomeView({ programs, reviews }: { programs: LandingProgr
         </div>
       </section>
 
+      {/* TANYA SAMUI FLAGSHIP */}
+      <section className='shell rise' style={{padding:'20px 0'}}><a href='/tanya-samui' className='card btn btn-primary' style={{display:'block',textAlign:'center',padding:'24px',fontSize:18,fontWeight:600}}>Explore Tanya Samui &mdash; our flagship wellness partner &rarr;</a></section>
       {/* HOW IT WORKS */}
       <section className="shell rise rise-3" style={{ position: "relative", zIndex: 1 }}>
         <div className="section-head">
@@ -203,7 +212,7 @@ export default function HomeView({ programs, reviews }: { programs: LandingProgr
                 </div>
                 <div>
                   {trackIcon && (
-                    <img
+                    <Image
                       src={trackIcon}
                       alt=""
                       aria-hidden="true"

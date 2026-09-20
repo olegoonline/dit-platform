@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 import { supabaseAdmin } from "@/lib/supabase-server"
 import { mapProgram, type DbProgramRow } from "../_lib/programMapping"
@@ -80,7 +81,7 @@ export default async function TanyaSamuiHub() {
     .from("programs")
     .select(
       "id, name, slug, summary, cohort, tier, duration_days, price_usd, outcomes, is_composite, hero_image_url, " +
-        "program_properties(role, properties(id, name, island, country, contact_wa)), " +
+        "program_properties(role, properties(id, name, slug, island, country, contact_wa)), " +
         "program_variants(duration_days, duration_nights, price_basic_usd, price_vip_usd, active)",
     )
     .eq("active", true)
@@ -89,7 +90,7 @@ export default async function TanyaSamuiHub() {
     .not("slug", "like", "mile-%")
     .order("sort_order")
 
-  const programs = ((progRows ?? []) as unknown as DbProgramRow[]).map(mapProgram)
+  const programs = ((progRows ?? []).filter((row: any) => (row.program_properties ?? []).some((pp: any) => ["tanya-core","bunya-clinic","tanya-wellbeing"].includes(pp.properties?.slug))) as unknown as DbProgramRow[]).map(mapProgram)
 
   const { data: reviewRows } = await supabaseAdmin
     .from("reviews")
@@ -113,8 +114,7 @@ export default async function TanyaSamuiHub() {
       {/* HERO */}
       <section style={{ position: "relative", minHeight: "72vh", display: "flex", alignItems: "flex-end", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={HERO_IMG} alt="Tanya Samui" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          <Image src={HERO_IMG} alt="Tanya Samui" fill priority sizes="100vw" style={{ objectFit: "cover" }} />
           <div
             style={{
               position: "absolute",
@@ -173,8 +173,9 @@ export default async function TanyaSamuiHub() {
             return (
               <div key={s.slug} className="card" style={{ overflow: "hidden" }}>
                 {img && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={img} alt={s.name} style={{ width: "100%", aspectRatio: "16 / 10", objectFit: "cover", display: "block" }} />
+                  <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 10" }}>
+                    <Image src={img} alt={s.name} fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: "cover" }} />
+                  </div>
                 )}
                 <div style={{ padding: 24 }}>
                   <div className="eyebrow" style={{ marginBottom: 8 }}>{s.tag}</div>
@@ -200,8 +201,7 @@ export default async function TanyaSamuiHub() {
         <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
           {GALLERY.map((g) => (
             <div key={g.url} style={{ position: "relative", borderRadius: 16, overflow: "hidden", aspectRatio: "4 / 3" }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={g.url} alt={g.caption} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              <Image src={g.url} alt={g.caption} fill sizes="(max-width: 768px) 50vw, 25vw" style={{ objectFit: "cover" }} />
               <div
                 style={{
                   position: "absolute",

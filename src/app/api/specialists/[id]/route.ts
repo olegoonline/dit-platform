@@ -28,8 +28,7 @@ async function loadAndAuthz(
   if (me.role === "admin") return { specialist }
   if (
     me.role === "partner" &&
-    me.partner_property_id &&
-    specialist.property_id === me.partner_property_id
+    me.partner_property_ids.includes(specialist.property_id)
   ) {
     return { specialist }
   }

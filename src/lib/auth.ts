@@ -4,7 +4,7 @@ export type SessionUser = {
   id: string
   email: string
   role: "admin" | "partner" | "user"
-  partner_property_id: string | null
+  partner_property_ids: string[]
   guest_user_id: string | null
 }
 
@@ -13,10 +13,10 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   const { data: { user } } = await sb.auth.getUser()
   if (!user) return null
 
-  const [{ data: profile }, { data: guest }] = await Promise.all([
+  const [{ data: profile }, { data: guest }, { data: links }] = await Promise.all([
     sb
       .from("profiles")
-      .select("role, partner_property_id")
+      .select("role")
       .eq("id", user.id)
       .single(),
     sb
@@ -24,13 +24,17 @@ export async function getSessionUser(): Promise<SessionUser | null> {
       .select("id")
       .eq("auth_user_id", user.id)
       .maybeSingle(),
+    sb
+      .from("partner_properties")
+      .select("property_id")
+      .eq("profile_id", user.id),
   ])
 
   return {
     id: user.id,
     email: user.email ?? "",
     role: profile?.role ?? "user",
-    partner_property_id: profile?.partner_property_id ?? null,
+    partner_property_ids: (links ?? []).map((l) => l.property_id as string),
     guest_user_id: guest?.id ?? null,
   }
 }

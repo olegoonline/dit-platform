@@ -1,8 +1,57 @@
+import Image from "next/image"
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 import { supabaseAdmin } from "@/lib/supabase-server"
 import { mapProgram, type DbProgramRow } from "../../_lib/programMapping"
 import ProgramCard from "../../_components/ProgramCard"
+import ReserveModal from "../../_components/ReserveModal"
+import type { Metadata } from "next"
+import { dataLayerScript } from "../../_lib/track"
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const { data } = await supabaseAdmin
+    .from("properties")
+    .select("name, island, country, description, image_url")
+    .eq("slug", slug)
+    .eq("active", true)
+    .maybeSingle()
+  if (!data) {
+    return { title: "Property not found" }
+  }
+  const row = data as unknown as {
+    name: string
+    island: string | null
+    country: string | null
+    description: string | null
+    image_url: string | null
+  }
+  const location = [row.island, row.country].filter(Boolean).join(", ")
+  const title = location ? `${row.name.trim()} - ${location}` : row.name.trim()
+  const description = row.description ?? `${row.name.trim()}, a verified wellness property on Dream Islands.`
+  return {
+    title,
+    description,
+    alternates: { canonical: `/properties/${slug}` },
+    openGraph: {
+      title: `${title} | Dream Islands`,
+      description,
+      url: `https://dreamislands.org/properties/${slug}`,
+      images: row.image_url ? [{ url: row.image_url }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | Dream Islands`,
+      description,
+      images: row.image_url ? [row.image_url] : undefined,
+    },
+  }
+}
+
 
 export const dynamic = "force-dynamic"
 
@@ -65,27 +114,47 @@ export default async function PropertyDetailPage({
     ? `https://wa.me/${property.contact_wa.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(`Hi! I'd like to know more about ${property.name.trim()}.`)}`
     : "https://wa.me/message/HOF2AFIBDYY5J1"
 
+  const propertyJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LodgingBusiness",
+    name: property.name.trim(),
+    description: property.description ?? undefined,
+    image: property.image_url ?? undefined,
+    url: `https://dreamislands.org/properties/${property.slug}`,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: property.island ?? undefined,
+      addressCountry: property.country ?? undefined,
+    },
+  }
+
   return (
     <div className="page" style={{ paddingBottom: 100 }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(propertyJsonLd) }} />
+      <script dangerouslySetInnerHTML={{ __html: dataLayerScript("view_property", { property_id: property.id, property_name: property.name, country: property.country, destination_country: property.country }) }} />
       <section className="shell" style={{ paddingTop: 24 }}>
         <Link href="/properties" className="btn btn-ghost" style={{ padding: "8px 14px", fontSize: 13, marginBottom: 24, display: "inline-flex" }}>
           {"←"} All properties
         </Link>
 
         {property.image_url && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={property.image_url}
-            alt={property.name.trim()}
-            style={{ width: "100%", aspectRatio: "16 / 7", objectFit: "cover", borderRadius: 20, display: "block", marginBottom: 28 }}
-          />
+          <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 7", borderRadius: 20, overflow: "hidden", marginBottom: 28 }}>
+            <Image
+              src={property.image_url}
+              alt={property.name.trim()}
+              fill
+              sizes="100vw"
+              style={{ objectFit: "cover" }}
+              priority
+            />
+          </div>
         )}
 
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline", gap: 10, marginBottom: 10 }}>
           <h1 className="display" style={{ margin: 0, fontSize: "clamp(34px, 7vw, 56px)", color: "var(--ink)" }}>
             {property.name.trim()}
           </h1>
-          {property.certified && <span className="tag">Certified</span>}
+          {property.certified && <span className="tag">Verified Partner</span>}
         </div>
 
         <div className="body-lg" style={{ marginBottom: 20, color: "var(--ink-2)" }}>
@@ -108,9 +177,24 @@ export default async function PropertyDetailPage({
           </div>
         )}
 
-        <a href={waHref} target="_blank" rel="noreferrer" className="btn btn-primary" style={{ marginBottom: 48, display: "inline-flex" }}>
-          Message on WhatsApp
-        </a>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 48 }}>
+          {programs.length > 0 && (
+            <ReserveModal
+              programs={programs.map((p) => ({
+                id: p.id,
+                name: p.name,
+                property_id: property.id,
+                property_name: property.name,
+                destination_country: property.country ?? undefined,
+              }))}
+              triggerLabel="Reserve a program here"
+              triggerClassName="btn btn-primary"
+            />
+          )}
+          <a href={waHref} target="_blank" rel="noreferrer" className="btn btn-ghost" style={{ display: "inline-flex" }}>
+            Message on WhatsApp
+          </a>
+        </div>
 
         <div className="section-head">
           <div>

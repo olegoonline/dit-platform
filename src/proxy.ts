@@ -15,7 +15,13 @@ const PUBLIC_PATHS = [
   "/auth/callback",
   "/api/intake",
   "/api/auth",
+  "/api/programs",
+  "/api/properties",
   "/api/bookings/public",
+  "/api/webhooks",
+  "/wellness-baseline-score",
+  "/how-wbs-works",
+  "/destinations",
 ]
 
 const PANEL_HOSTS = new Set(["panel.dreamislands.org"])
@@ -35,6 +41,10 @@ const PUBLIC_HOST_ALLOWED = [
   "/api/programs",
   "/api/properties",
   "/api/bookings/public",
+  "/api/webhooks",
+  "/wellness-baseline-score",
+  "/how-wbs-works",
+  "/destinations",
 ]
 
 const PANEL_HOST_ALLOWED = [
@@ -45,6 +55,8 @@ const PANEL_HOST_ALLOWED = [
   "/partner",
   "/admin",
   "/api/auth",
+  "/api/programs",
+  "/api/properties",
   "/api/me",
   "/api/admin",
   "/api/users",
@@ -54,6 +66,7 @@ const PANEL_HOST_ALLOWED = [
   "/api/properties",
   "/api/services",
   "/api/accommodations",
+  "/api/property-requests",
   "/api/upload",
   "/api/intake",
 ]
@@ -135,5 +148,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|llms.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
 }

@@ -5,6 +5,7 @@ import { useMemo, useState } from "react"
 import { COHORT_LABELS } from "../../_lib/programMapping"
 import { Icon } from "../../_components/Icon"
 import ProgramImage from "../../_components/ProgramImage"
+import ReserveModal from "../../_components/ReserveModal"
 
 type Property = {
   id: string
@@ -85,6 +86,13 @@ export type AccommodationItem = {
   properties: { id: string; name: string } | null
 }
 
+export type ConfirmedBooking = {
+  id: string
+  arrival: string
+  departure: string
+  pax: number
+}
+
 const COUNTRY_FLAG: Record<string, string> = {
   Indonesia: "🇮🇩",
   Thailand: "🇹🇭",
@@ -93,6 +101,29 @@ const COUNTRY_FLAG: Record<string, string> = {
 
 function fmtTime(t: string | null): string {
   return t ? t.slice(0, 5) : ""
+}
+
+function fmtDateLong(iso: string): string {
+  const d = new Date(iso + "T00:00:00Z")
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
+}
+
+function buildIcsHref(booking: ConfirmedBooking, programName: string): string {
+  const compact = (iso: string) => iso.replace(/-/g, "")
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Dream Islands//Booking//EN",
+    "BEGIN:VEVENT",
+    `UID:${booking.id}@dreamislands.org`,
+    `DTSTART;VALUE=DATE:${compact(booking.arrival)}`,
+    `DTEND;VALUE=DATE:${compact(booking.departure)}`,
+    `SUMMARY:${programName} — Dream Islands`,
+    "DESCRIPTION:Your Dream Islands wellness stay.",
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ]
+  return "data:text/calendar;charset=utf8," + encodeURIComponent(lines.join("\r\n"))
 }
 
 function ContentBlock({ title, body }: { title: string; body: string | null | undefined }) {
@@ -121,12 +152,15 @@ function ContentBlock({ title, body }: { title: string; body: string | null | un
 export default function ProgramDetailView({
   program,
   accommodations,
+  confirmedBooking,
 }: {
   program: ProgramDetail
   accommodations: AccommodationItem[]
+  confirmedBooking?: ConfirmedBooking | null
 }) {
   const cohort = COHORT_LABELS[program.cohort] ?? { name: "Reset", color: "var(--accent)" }
   const properties = program.program_properties.map((pp) => pp.properties).filter(Boolean)
+  const primaryProperty = properties[0] ?? null
   const firstWa = properties.find((p) => p?.contact_wa)?.contact_wa ?? null
   const waHref = firstWa
     ? `https://wa.me/${firstWa.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(`Hi! I'd like to book "${program.name}".`)}`
@@ -183,6 +217,61 @@ export default function ProgramDetailView({
           <Icon.back width={14} height={14} /> All programs
         </Link>
 
+        {confirmedBooking && (
+          <div
+            className="card"
+            style={{ padding: "30px 26px", marginBottom: 32, background: "var(--accent)", color: "var(--accent-ink)", border: 0 }}
+          >
+            <div className="eyebrow" style={{ color: "rgba(255,255,255,.8)", marginBottom: 8 }}>
+              Deposit received · Booking #{confirmedBooking.id.slice(0, 8).toUpperCase()}
+            </div>
+            <h2 className="display" style={{ margin: "0 0 14px", fontSize: "clamp(24px, 4vw, 34px)" }}>
+              Your journey has started.
+            </h2>
+            <p className="body" style={{ marginBottom: 20, maxWidth: 560 }}>
+              Your reservation request is reviewed after the deposit is received. If availability cannot be confirmed, your deposit will be refunded in full.
+            </p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "18px 40px", marginBottom: 22, fontSize: 14 }}>
+              <div>
+                <div style={{ opacity: 0.7, fontSize: 12 }}>Arrival</div>
+                <strong>{fmtDateLong(confirmedBooking.arrival)}</strong>
+              </div>
+              <div>
+                <div style={{ opacity: 0.7, fontSize: 12 }}>Departure</div>
+                <strong>{fmtDateLong(confirmedBooking.departure)}</strong>
+              </div>
+              <div>
+                <div style={{ opacity: 0.7, fontSize: 12 }}>Guests</div>
+                <strong>{confirmedBooking.pax}</strong>
+              </div>
+            </div>
+            <div style={{ display: "grid", gap: 8, marginBottom: 22, fontSize: 14 }}>
+              <div>1. We review your request and confirm availability.</div>
+              <div>2. You receive pre-arrival prep and full details.</div>
+              <div>3. You arrive and begin your protocol.</div>
+            </div>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <a
+                href={waHref}
+                target="_blank"
+                rel="noreferrer"
+                className="btn"
+                style={{ background: "var(--accent-ink)", color: "var(--accent-deep)" }}
+              >
+                <Icon.wa width={16} height={16} /> Message your advisor
+              </a>
+              <a
+                href={buildIcsHref(confirmedBooking, program.name)}
+                download="dream-islands-booking.ics"
+                className="btn"
+                style={{ background: "transparent", color: "var(--accent-ink)", border: "1px solid rgba(255,255,255,.4)" }}
+              >
+                Add to calendar
+              </a>
+            </div>
+          </div>
+        )}
+
         {/* HERO */}
         <div style={{ display: "grid", gap: 28 }} className="detail-hero">
           <div>
@@ -214,7 +303,18 @@ export default function ProgramDetailView({
               </p>
             )}
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 24 }}>
-              <a className="btn btn-primary btn-lg" href={waHref} target="_blank" rel="noreferrer">
+              <ReserveModal
+                programs={[{
+                  id: program.id,
+                  name: program.name,
+                  property_id: primaryProperty?.id,
+                  property_name: primaryProperty?.name,
+                  destination_country: primaryProperty?.country ?? undefined,
+                }]}
+                triggerLabel="Reserve dates"
+                triggerClassName="btn btn-primary btn-lg"
+              />
+              <a className="btn btn-ghost btn-lg" href={waHref} target="_blank" rel="noreferrer">
                 <Icon.wa width={16} height={16} /> Book on WhatsApp
               </a>
               <Link className="btn btn-ghost btn-lg" href="/start">
@@ -465,7 +565,7 @@ export default function ProgramDetailView({
                               {r.has_pool ? " · private pool" : ""}
                             </div>
                             <div style={{ marginTop: 6, fontWeight: 600, color: "var(--ink)" }}>
-                              ฿{Number(r.price_thb_per_night).toLocaleString()} / night
+                              Included with your package
                             </div>
                           </div>
                         ))}
@@ -536,12 +636,25 @@ export default function ProgramDetailView({
             <span className="display-italic">Talk to a human.</span> We&apos;ll lock in dates and pre-arrival prep.
           </h3>
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <ReserveModal
+              programs={[{
+                id: program.id,
+                name: program.name,
+                property_id: primaryProperty?.id,
+                property_name: primaryProperty?.name,
+                destination_country: primaryProperty?.country ?? undefined,
+              }]}
+              triggerLabel="Reserve dates"
+              triggerClassName="btn"
+              triggerStyle={{ background: "var(--accent-ink)", color: "var(--accent-deep)" }}
+            />
+            
             <a
               href={waHref}
               target="_blank"
               rel="noreferrer"
               className="btn"
-              style={{ background: "var(--accent-ink)", color: "var(--accent-deep)" }}
+              style={{ background: "transparent", color: "var(--accent-ink)", border: "1px solid rgba(255,255,255,.4)" }}
             >
               <Icon.wa width={16} height={16} /> Message on WhatsApp
             </a>

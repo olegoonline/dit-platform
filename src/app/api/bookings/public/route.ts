@@ -116,11 +116,18 @@ async function notifyInquiry(args: {
 
     let partnerEmails: string[] = []
     if (propertyIds.length > 0) {
-      const { data: partners } = await supabaseAdmin
-        .from("profiles")
-        .select("id, partner_property_id")
-        .eq("role", "partner")
-        .in("partner_property_id", propertyIds)
+      const { data: links } = await supabaseAdmin
+        .from("partner_properties")
+        .select("profile_id")
+        .in("property_id", propertyIds)
+      const linkedIds = Array.from(new Set((links ?? []).map((l) => l.profile_id as string)))
+      const { data: partners } = linkedIds.length
+        ? await supabaseAdmin
+            .from("profiles")
+            .select("id")
+            .eq("role", "partner")
+            .in("id", linkedIds)
+        : { data: [] as Array<{ id: string }> }
       const ids = (partners ?? []).map((p) => p.id)
       if (ids.length > 0) {
         const { data: { users } } = await supabaseAdmin.auth.admin.listUsers({ perPage: 200 })

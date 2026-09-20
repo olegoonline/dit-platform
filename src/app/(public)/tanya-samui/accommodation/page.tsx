@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 import { supabaseAdmin } from "@/lib/supabase-server"
 import { Icon } from "../../_components/Icon"
@@ -45,8 +46,9 @@ export default async function TanyaAccommodationPage() {
           {rooms.map((r) => (
             <div key={r.id} className="card" style={{ overflow: "hidden" }}>
               {r.image_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={r.image_url} alt={r.room_type} style={{ width: "100%", aspectRatio: "4 / 3", objectFit: "cover", display: "block" }} />
+                <div style={{ position: "relative", width: "100%", aspectRatio: "4 / 3" }}>
+                  <Image src={r.image_url} alt={r.room_type} fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: "cover" }} />
+                </div>
               ) : (
                 <div
                   aria-hidden="true"

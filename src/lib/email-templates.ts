@@ -138,3 +138,31 @@ export function magicLink(args: { email: string; link: string }) {
   const text = `Sign in: ${args.link}\nThe link expires in one hour.`
   return { subject, html, text }
 }
+
+// ─── partner requests a new property ──────────────────────
+export function propertyRequestSubmitted(args: {
+  partnerEmail: string
+  propertyName: string
+  island: string | null
+  country: string | null
+  description: string | null
+  contactName: string | null
+  contactPhone: string | null
+  adminUrl: string
+}) {
+  const subject = `🏝 Property request: ${args.propertyName} — ${args.partnerEmail}`
+  const location = [args.island, args.country].filter(Boolean).join(", ")
+  const html = layout(
+    "New property request",
+    `<p><strong>Partner:</strong> ${escape(args.partnerEmail)}</p>
+     <p><strong>Property:</strong> ${escape(args.propertyName)}${location ? ` — ${escape(location)}` : ""}</p>
+     ${args.contactName || args.contactPhone
+       ? `<p><strong>Contact:</strong> ${escape(args.contactName ?? "—")}${args.contactPhone ? ` · ${escape(args.contactPhone)}` : ""}</p>`
+       : ""}
+     ${args.description ? `<p><strong>Notes:</strong> ${escape(args.description)}</p>` : ""}
+     <p style="font-size:13px;color:#6b7975;">The request is saved in the platform — the partner can see its status in their Properties tab.</p>
+     <p>${btn("Open properties", args.adminUrl)}</p>`,
+  )
+  const text = `Property request from ${args.partnerEmail}\n${args.propertyName}${location ? ` — ${location}` : ""}\n${args.description ?? ""}\n${args.adminUrl}`
+  return { subject, html, text }
+}

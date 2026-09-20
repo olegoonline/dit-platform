@@ -21,6 +21,7 @@ import {
   Typography,
 } from "antd"
 import type { ColumnsType } from "antd/es/table"
+import { rowNav } from "../../_components/rowNav"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -235,6 +236,7 @@ export default function ProgramsView({
           columns={columns}
           dataSource={rows}
           pagination={false}
+          onRow={(r) => rowNav(() => router.push(`/admin/programs/${r.id}/edit`))}
           locale={{ emptyText: <Empty description="No programs yet" /> }}
         />
       </Card>

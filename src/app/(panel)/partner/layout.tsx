@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 import {
   AppstoreOutlined,
+  EnvironmentOutlined,
   TeamOutlined,
   UserOutlined,
 } from "@ant-design/icons"
@@ -8,6 +9,12 @@ import Shell, { type NavItem } from "../_components/Shell"
 import { getSessionUser } from "@/lib/auth"
 
 const navItems: NavItem[] = [
+  {
+    key: "/partner/properties",
+    href: "/partner/properties",
+    icon: <EnvironmentOutlined />,
+    label: "Properties",
+  },
   {
     key: "/partner",
     href: "/partner",

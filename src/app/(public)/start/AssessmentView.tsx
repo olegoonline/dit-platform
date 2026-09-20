@@ -11,6 +11,7 @@ import {
   type WbsResult,
 } from "@/lib/wbs"
 import { Icon } from "../_components/Icon"
+import { track } from "../_lib/track"
 
 const ALL_QUESTIONS = WBS_QUESTIONS.filter(
   (q): q is Extract<WbsQuestion, { type: "choice" }> | Extract<WbsQuestion, { type: "height_weight" }> =>
@@ -59,6 +60,10 @@ export default function AssessmentView() {
   function pickHeightWeight(heightCm: number | null, weightKg: number | null) {
     advance({ ...answers, height_cm: heightCm, weight_kg: weightKg })
   }
+
+  useEffect(() => {
+    track("wbs_start")
+  }, [])
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -115,6 +120,7 @@ export default function AssessmentView() {
       }
       setScore(result)
       setPhase("done")
+      track("wbs_complete", { wbs_score: result.total, cohort: result.cohort })
       setTimeout(() => router.push(`/matched/${json.user.id}`), 2200)
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Network error")

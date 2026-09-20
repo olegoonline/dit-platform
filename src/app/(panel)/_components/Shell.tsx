@@ -31,13 +31,14 @@ export default function Shell({
   titleMap?: Record<string, string>
 }) {
   const pathname = usePathname()
-  const activeKey =
-    navItems.find((i) => i.key === pathname)?.key ?? navItems[0]?.key ?? ""
+  // Longest-prefix match so detail routes (/admin/properties/<id>) resolve to
+  // their section instead of falling back to the first nav item.
+  const match = navItems
+    .filter((i) => pathname === i.key || pathname.startsWith(i.key + "/"))
+    .sort((a, b) => b.key.length - a.key.length)[0]
+  const activeKey = match?.key ?? navItems[0]?.key ?? ""
   const pageTitle =
-    (titleMap && titleMap[pathname]) ??
-    navItems.find((i) => i.key === pathname)?.label ??
-    brand ??
-    "DIT Platform"
+    (titleMap && titleMap[pathname]) ?? match?.label ?? brand ?? "DIT Platform"
 
   const menuItems = navItems.map((i) => ({
     key: i.key,

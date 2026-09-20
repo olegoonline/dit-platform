@@ -1,8 +1,9 @@
+import Image from "next/image"
 import { Icon } from "./Icon"
 
 const COHORT_GRADIENT: Record<number, string> = {
   1: "linear-gradient(135deg, #2C3336 0%, #1B5A45 100%)",
-  2: "linear-gradient(135deg, #2C3336 0%, #7A6A2E 100%)",
+  2: "linear-gradient(135deg, #0F1A16 0%, #5FBE8C 100%)",
   3: "linear-gradient(135deg, #2C3336 0%, #6B3F52 100%)",
   4: "linear-gradient(135deg, #2C3336 0%, #2F4A66 100%)",
 }
@@ -13,29 +14,41 @@ export default function ProgramImage({
   alt,
   aspect = "4 / 3",
   rounded,
+  priority,
 }: {
   url: string | null | undefined
   cohort: number
   alt: string
   aspect?: string
   rounded?: number
+  priority?: boolean
 }) {
-  const baseStyle: React.CSSProperties = {
+  const wrapStyle: React.CSSProperties = {
+    position: "relative",
     width: "100%",
     aspectRatio: aspect,
-    objectFit: "cover",
-    display: "block",
+    overflow: "hidden",
     borderRadius: rounded,
   }
   if (url) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img src={url} alt={alt} style={baseStyle} loading="lazy" />
+    return (
+      <div style={wrapStyle}>
+        <Image
+          src={url}
+          alt={alt}
+          fill
+          sizes="(max-width: 768px) 100vw, 480px"
+          style={{ objectFit: "cover" }}
+          priority={priority}
+        />
+      </div>
+    )
   }
   return (
     <div
       aria-hidden="true"
       style={{
-        ...baseStyle,
+        ...wrapStyle,
         background: COHORT_GRADIENT[cohort] ?? COHORT_GRADIENT[1],
         display: "grid",
         placeItems: "center",

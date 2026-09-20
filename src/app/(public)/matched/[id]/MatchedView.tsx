@@ -1,4 +1,5 @@
 "use client"
+import Image from "next/image"
 
 import Link from "next/link"
 import { useState } from "react"
@@ -109,6 +110,10 @@ export default function MatchedView({
       })
       const json = await res.json()
       if (!res.ok || !json.success) { setSubmitError(json.error ?? "Could not save inquiry"); return }
+      if (json.checkout_url) {
+        window.location.href = json.checkout_url
+        return
+      }
       setReservedIds((s) => new Set(s).add(reserveTarget.id))
       setSubmitOk(`Inquiry sent for ${reserveTarget.name}. We'll WhatsApp you within a few minutes.`)
       setReserveTarget(null)
@@ -349,8 +354,12 @@ export default function MatchedView({
                 </div>
               )}
               <button type="submit" className="btn btn-primary btn-block btn-lg" disabled={submitting}>
-                {submitting ? "Sending…" : "Send inquiry"}
+                {submitting ? "Redirecting…" : "Continue to secure payment"}
               </button>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, fontSize: 12, color: "var(--ink-3)" }}>
+                20% deposit, secured by
+                <Image src="/stripe-logo.png" alt="Stripe" width={53} height={14} style={{ height: 14, width: "auto" }} />
+              </div>
               <button type="button" className="btn btn-ghost btn-block" onClick={closeReserve}>Cancel</button>
             </form>
           </div>

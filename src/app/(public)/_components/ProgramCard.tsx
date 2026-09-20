@@ -1,5 +1,6 @@
 import Link from "next/link"
 import type { LandingProgram } from "../_lib/programMapping"
+import { outcomeIcon } from "../_lib/programMapping"
 import { Icon } from "./Icon"
 import ProgramImage from "./ProgramImage"
 
@@ -33,6 +34,11 @@ export default function ProgramCard({
             <span className="tag" style={{ background: "rgba(255,255,255,.92)", color: "var(--ink-2)" }}>
               {p.type}
             </span>
+            {p.performanceSubtype && (
+              <span className="tag" style={{ background: "var(--ink)", color: "var(--accent)", fontWeight: 600 }}>
+                {p.performanceSubtype.label}
+              </span>
+            )}
           </div>
           <div style={{ position: "absolute", bottom: 14, left: 16, color: "white" }}>
             <div className="body-sm" style={{ color: "rgba(255,255,255,.85)", marginBottom: 4 }}>
@@ -58,6 +64,9 @@ export default function ProgramCard({
   }
 
   const wide = variant === "wide"
+  const outcomeIcons = Array.from(
+    new Set(p.tags.map(outcomeIcon).filter((x): x is string => !!x)),
+  ).slice(0, 4)
   return (
     <article className="card" style={{ width: wide ? "100%" : 260 }}>
       <Link href={href} style={{ display: "block", position: "relative" }}>
@@ -75,6 +84,22 @@ export default function ProgramCard({
         >
           <span style={{ width: 6, height: 6, borderRadius: 3, background: p.trackColor }} /> {p.track}
         </span>
+        {p.performanceSubtype && (
+          <span
+            className="tag"
+            style={{
+              position: "absolute",
+              top: 10,
+              right: 10,
+              background: "var(--ink)",
+              color: "var(--accent)",
+              fontSize: 11,
+              fontWeight: 600,
+            }}
+          >
+            {p.performanceSubtype.label}
+          </span>
+        )}
       </Link>
       <div style={{ padding: "14px 16px 16px" }}>
         <Link href={href}>
@@ -85,6 +110,13 @@ export default function ProgramCard({
         <div className="body-sm" style={{ marginBottom: 8 }}>
           {p.flag} {p.location}
         </div>
+        {outcomeIcons.length > 0 && (
+          <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
+            {outcomeIcons.map((icon) => (
+              <img key={icon} src={`/icons/outcomes/${icon}_448.png`} alt={icon} width={18} height={18} />
+            ))}
+          </div>
+        )}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
           <span className="body-sm" style={{ color: "var(--ink-2)" }}>{p.duration}</span>
           <span style={{ fontSize: 14, fontWeight: 600, color: "var(--ink)" }}>{p.price}</span>

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { supabaseAdmin } from "@/lib/supabase-server"
 import { getSessionUser } from "@/lib/auth"
+import { partnerCanSeeGuest } from "@/lib/partner-scope"
 
 const ADMIN_EDITABLE = [
   "name",
@@ -22,25 +23,6 @@ function bad(message: string, status = 400) {
   return NextResponse.json({ success: false, error: message }, { status })
 }
 
-async function partnerCanSeeGuest(
-  partnerPropertyId: string,
-  guestId: string,
-): Promise<boolean> {
-  const { data } = await supabaseAdmin
-    .from("bookings")
-    .select("id, program_id, programs!inner(program_properties!inner(property_id))")
-    .eq("user_id", guestId)
-  if (!data || data.length === 0) return false
-  for (const row of data as unknown as Array<{
-    programs: { program_properties: Array<{ property_id: string }> } | null
-  }>) {
-    for (const pp of row.programs?.program_properties ?? []) {
-      if (pp.property_id === partnerPropertyId) return true
-    }
-  }
-  return false
-}
-
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },
@@ -50,12 +32,12 @@ export async function GET(
   const { id } = await params
 
   const isAdmin = me.role === "admin"
-  const isPartner = me.role === "partner" && !!me.partner_property_id
+  const isPartner = me.role === "partner" && me.partner_property_ids.length > 0
   const isSelf = me.guest_user_id === id
 
   if (!isAdmin && !isPartner && !isSelf) return bad("forbidden", 403)
   if (isPartner && !isAdmin && !isSelf) {
-    const ok = await partnerCanSeeGuest(me.partner_property_id!, id)
+    const ok = await partnerCanSeeGuest(me.partner_property_ids, id)
     if (!ok) return bad("forbidden", 403)
   }
 
@@ -99,12 +81,12 @@ export async function PATCH(
   }
 
   const isAdmin = me.role === "admin"
-  const isPartner = me.role === "partner" && !!me.partner_property_id
+  const isPartner = me.role === "partner" && me.partner_property_ids.length > 0
   const isSelf = me.guest_user_id === id
 
   if (!isAdmin && !isPartner && !isSelf) return bad("forbidden", 403)
   if (isPartner && !isAdmin && !isSelf) {
-    const ok = await partnerCanSeeGuest(me.partner_property_id!, id)
+    const ok = await partnerCanSeeGuest(me.partner_property_ids, id)
     if (!ok) return bad("forbidden", 403)
   }
 

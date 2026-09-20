@@ -145,6 +145,14 @@ body {
   .topnav-cta { padding: 12px 20px; font-size: 14px; }
 }
 
+.topnav-dropdown { position: relative; display: inline-flex; align-items: center; }
+.topnav-dropdown-trigger { font-size: 14px; color: var(--ink-2); letter-spacing: .01em; transition: color .2s; background: none; border: none; cursor: pointer; font-family: inherit; padding: 0; }
+.topnav-dropdown-trigger:hover, .topnav-dropdown-trigger.active { color: var(--ink); }
+.topnav-dropdown-menu { position: absolute; top: 100%; left: 0; margin-top: 14px; background: var(--bg); border: 1px solid color-mix(in oklab, var(--ink) 12%, transparent); border-radius: 12px; padding: 10px; min-width: 220px; display: flex; flex-direction: column; gap: 2px; box-shadow: 0 12px 32px -12px rgba(0,0,0,.4); }
+.topnav-dropdown-menu a { font-size: 14px; color: var(--ink-2); padding: 8px 10px; border-radius: 8px; transition: background .15s, color .15s; }
+.topnav-dropdown-menu a:hover { background: var(--accent-soft); color: var(--ink); }
+.topnav-dropdown-divider { height: 1px; background: color-mix(in oklab, var(--ink) 12%, transparent); margin: 6px 4px; }
+
 /* ??? Brand mark ??? */
 .brand {
   display: inline-flex;

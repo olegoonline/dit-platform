@@ -10,14 +10,20 @@ export default async function PartnerOverview() {
   const user = await getSessionUser()
   const sb = await supabaseServer()
 
+  const propertyIds = user?.partner_property_ids ?? []
   let propertyLabel: string | null = null
-  if (user?.partner_property_id) {
+  if (propertyIds.length > 0) {
     const { data } = await sb
       .from("properties")
       .select("name, island, country")
-      .eq("id", user.partner_property_id)
-      .single()
-    if (data) propertyLabel = `${data.name} — ${data.island}, ${data.country}`
+      .in("id", propertyIds)
+      .order("name", { ascending: true })
+    if (data && data.length > 0) {
+      propertyLabel =
+        data.length === 1
+          ? `${data[0].name} — ${data[0].island}, ${data[0].country}`
+          : data.map((p) => p.name).join(" · ")
+    }
   }
 
   const { data: rows } = await sb

@@ -1,7 +1,9 @@
+import Image from "next/image"
 import Link from "next/link"
 import { supabaseAdmin } from "@/lib/supabase-server"
 import Brand from "./Brand"
 import { Icon } from "./Icon"
+import { TRACKS } from "../_lib/programMapping"
 
 const COMPANY_LINKS = [
   { href: "/about", label: "About" },
@@ -12,8 +14,14 @@ const COMPANY_LINKS = [
 const CONTACT_LINKS = [
   { href: "https://wa.me/message/HOF2AFIBDYY5J1", label: "WhatsApp consult", external: true },
   { href: "mailto:hello@dreamislands.org", label: "hello@dreamislands.org", external: true },
-  { href: "https://instagram.com/", label: "Instagram", external: true },
+  { href: "https://www.instagram.com/dreamislands_travel/", label: "Instagram", external: true },
   { href: "https://t.me/", label: "Telegram", external: true },
+]
+
+const SOCIAL_LINKS = [
+  { href: "https://www.instagram.com/dreamislands_travel/", label: "Instagram", icon: Icon.instagram },
+  { href: "https://www.linkedin.com/company/dream-islands/", label: "LinkedIn", icon: Icon.linkedin },
+  { href: "https://www.youtube.com/@DreamIslandsTravel", label: "YouTube", icon: Icon.youtube },
 ]
 
 const COUNTRY_FLAGS: Record<string, string> = {
@@ -38,17 +46,10 @@ export default async function Footer() {
 
   const countries = [...new Set((propRows ?? []).map((p) => p.country).filter(Boolean))] as string[]
 
-  const { data: progRows } = await supabaseAdmin
-    .from("programs")
-    .select("name, slug")
-    .eq("active", true)
-    .eq("status", "published")
-    .order("sort_order")
-    .limit(6)
-
-  const programLinks: Link[] = (progRows ?? [])
-    .filter((p) => p.slug)
-    .map((p) => ({ href: `/programs/${p.slug}`, label: p.name }))
+  const outcomesLinks: Link[] = TRACKS.map((t) => ({
+    href: `/programs?track=${t.id}`,
+    label: t.label,
+  }))
 
   const exploreLinks: Link[] = [
     { href: "/properties", label: "Destinations" },
@@ -85,10 +86,25 @@ export default async function Footer() {
               Take baseline
             </Link>
           </div>
+          <div style={{ display: "flex", gap: 12, marginTop: 18 }}>
+            {SOCIAL_LINKS.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={s.label}
+                className="footer-link"
+                style={{ display: "inline-flex" }}
+              >
+                <s.icon width={20} height={20} />
+              </a>
+            ))}
+          </div>
         </div>
 
         <FooterCol title="Explore" links={exploreLinks} />
-        <FooterCol title="Featured programs" links={programLinks} />
+        <FooterCol title="Outcomes" links={outcomesLinks} />
         <FooterCol title="Company" links={COMPANY_LINKS} />
         <FooterCol title="Stay in touch" links={CONTACT_LINKS} />
       </div>
@@ -97,10 +113,15 @@ export default async function Footer() {
         <div className="eyebrow" style={{ marginBottom: 10 }}>We host in</div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 18, alignItems: "center" }}>
           {countries.map((c) => (
-            <span key={c} style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "var(--ink-2)", fontSize: 14 }}>
+            <Link
+              key={c}
+              href="/properties"
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "var(--ink-2)", fontSize: 14 }}
+              className="footer-link"
+            >
               <span style={{ fontSize: 18 }}>{COUNTRY_FLAGS[c] ?? ""}</span>
               {c}
-            </span>
+            </Link>
           ))}
         </div>
       </div>
@@ -142,14 +163,20 @@ export default async function Footer() {
               </a>
             </div>
             <div className="body-sm">
-              <Link href="/partners" className="footer-link">Partnership / B2B / MICE</Link> — Singapore-based company
+              <Link href="/partners" className="footer-link">Partnership / B2B / MICE</Link> — Singapore entity incorporation in progress
             </div>
           </div>
         </div>
       </div>
 
       <div className="footer-bottom">
-        <div>© {new Date().getFullYear()} Dream Islands Travel · WBS v1</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
+          <span>© {new Date().getFullYear()} Dream Islands Travel · WBS v1</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "var(--ink-3)", fontSize: 12 }}>
+            Secure payments powered by
+            <Image src="/stripe-logo.png" alt="Stripe" width={60} height={16} style={{ height: 16, width: "auto" }} />
+          </span>
+        </div>
         <div style={{ display: "flex", gap: 18, flexWrap: "wrap" }}>
           <a href="#" className="footer-link">Privacy</a>
           <a href="#" className="footer-link">Terms</a>
