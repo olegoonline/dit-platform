@@ -22,7 +22,7 @@ export default function OverviewView({
           Welcome to DIT
         </Title>
         <Text type="secondary">
-          Wellness-travel operating system for Southeast Asia · live Supabase backend
+          Wellness-travel operating system for Asia · live Supabase backend
         </Text>
       </div>
 

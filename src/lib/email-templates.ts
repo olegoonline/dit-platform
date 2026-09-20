@@ -166,3 +166,44 @@ export function propertyRequestSubmitted(args: {
   const text = `Property request from ${args.partnerEmail}\n${args.propertyName}${location ? ` — ${location}` : ""}\n${args.description ?? ""}\n${args.adminUrl}`
   return { subject, html, text }
 }
+
+// ─── for-properties (new platform lead) ────────────────────────────────
+export function forPropertiesLeadReceived(args: {
+  fullName: string
+  businessEmail: string
+  role: string | null
+  propertyOrGroup: string
+  countryCity: string | null
+  website: string | null
+  programToReview: string | null
+  bottleneck: string | null
+}): { subject: string; html: string; text: string } {
+  const subject = `New platform demo request — ${args.propertyOrGroup}`
+  const rows: Array<[string, string | null]> = [
+    ["Contact", `${args.fullName} (${args.businessEmail})`],
+    ["Role", args.role],
+    ["Property / group", args.propertyOrGroup],
+    ["Country / city", args.countryCity],
+    ["Website", args.website],
+    ["Program to review", args.programToReview],
+    ["Operational bottleneck", args.bottleneck],
+  ]
+  const body = `
+    <p style="font-size:14px;color:#3c4a45;margin:0 0 18px;">A wellness property requested a platform demo via /for-properties.</p>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      ${rows
+        .filter(([, v]) => v)
+        .map(
+          ([k, v]) =>
+            `<tr><td style="padding:6px 10px 6px 0;color:#9aa6a1;white-space:nowrap;vertical-align:top;">${escape(k)}</td><td style="padding:6px 0;color:#10221c;">${escape(v as string)}</td></tr>`,
+        )
+        .join("")}
+    </table>
+    <div style="margin-top:20px;">${btn("Reply to " + args.fullName, `mailto:${args.businessEmail}`)}</div>
+  `
+  const text = rows
+    .filter(([, v]) => v)
+    .map(([k, v]) => `${k}: ${v}`)
+    .join("\n")
+  return { subject, html: layout(subject, body), text }
+}

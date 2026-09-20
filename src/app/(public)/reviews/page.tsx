@@ -1,6 +1,18 @@
 ﻿import Link from "next/link"
+import type { Metadata } from "next"
 import { supabaseAdmin } from "@/lib/supabase-server"
 import { ReviewCard, type Review } from "../_components/ReviewsSection"
+
+export const metadata: Metadata = {
+  title: "Guest Reviews",
+  description: "Real guest stories from Dream Islands wellness journeys across Asia — outcomes, programs, and destinations.",
+  alternates: { canonical: "/reviews" },
+  openGraph: {
+    title: "Guest Reviews | Dream Islands",
+    description: "Real guest stories from Dream Islands wellness journeys across Asia.",
+    url: "https://dreamislands.org/reviews",
+  },
+}
 
 export const dynamic = "force-dynamic"
 

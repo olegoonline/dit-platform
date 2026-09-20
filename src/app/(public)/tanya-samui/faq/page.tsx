@@ -4,11 +4,11 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Tanya Samui — Frequently Asked Questions",
-  description: "23 answers covering the Tanya Samui protocol, Wellness Baseline tracking, payment, medical safety and arrival logistics.",
+  description: "23 answers covering the Tanya Samui protocol, WS tracking, payment, medical safety and arrival logistics.",
   alternates: { canonical: "/tanya-samui/faq" },
   openGraph: {
     title: "Tanya Samui — Frequently Asked Questions | Dream Islands",
-    description: "23 answers covering the Tanya Samui protocol, Wellness Baseline tracking, payment, medical safety and arrival logistics.",
+    description: "23 answers covering the Tanya Samui protocol, WS tracking, payment, medical safety and arrival logistics.",
     url: "https://dreamislands.org/tanya-samui/faq",
   },
 }
@@ -25,7 +25,7 @@ type FaqRow = {
 
 const CATEGORY_LABELS: Record<string, string> = {
   general: "General",
-  wbs: "Wellness Baseline",
+  wbs: "WS",
   payment: "Payment",
   medical: "Medical & Safety",
   logistics: "Arrival & Logistics",

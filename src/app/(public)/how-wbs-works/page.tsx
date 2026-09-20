@@ -2,12 +2,12 @@ import Link from "next/link"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "How the Wellness Baseline Score Works",
-  description: "23 questions across 6 sections produce your Wellness Baseline Score (WBS) and match you to one of six wellness program focus areas.",
+  title: "How the Wellbeing & Wellness Score (WS) Works",
+  description: "23 questions across 6 sections produce your Wellbeing & Wellness Score (WS) and match you to one of six wellness program focus areas.",
   alternates: { canonical: "/how-wbs-works" },
   openGraph: {
-    title: "How the Wellness Baseline Score Works | Dream Islands",
-    description: "23 questions across 6 sections produce your Wellness Baseline Score (WBS) and match you to one of six wellness program focus areas.",
+    title: "How the Wellbeing & Wellness Score (WS) Works | Dream Islands",
+    description: "23 questions across 6 sections produce your Wellbeing & Wellness Score (WS) and match you to one of six wellness program focus areas.",
     url: "https://dreamislands.org/how-wbs-works",
   },
 }
@@ -23,8 +23,8 @@ const SECTIONS = [
 
 const FAQS = [
   {
-    q: "Is the Wellness Baseline Score a medical diagnosis?",
-    a: "No. Dream Islands operates as a Destination Marketing Organization promoting wellness travel. We do not provide medical or psychiatric services and are not a medical institution. WBS is a self-reported wellness assessment used to personalize program recommendations.",
+    q: "Is the Wellbeing & Wellness Score a medical diagnosis?",
+    a: "No. Dream Islands operates as a Destination Marketing Organization promoting wellness travel. We do not provide medical or psychiatric services and are not a medical institution. WS is a self-reported wellness assessment used to personalize program recommendations.",
   },
   {
     q: "How many questions are in the assessment?",
@@ -51,17 +51,39 @@ export default function HowWbsWorksPage() {
       acceptedAnswer: { "@type": "Answer", text: f.a },
     })),
   }
+  const howToJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "How to take the Dream Islands Wellbeing & Wellness Score (WS) assessment",
+    description:
+      "23 questions across 6 sections produce your Wellness Baseline Score (WBS) and match you to a wellness program.",
+    totalTime: "PT5M",
+    step: [
+      ...SECTIONS.map((s) => ({
+        "@type": "HowToStep",
+        name: s.label,
+        text: s.detail,
+      })),
+      {
+        "@type": "HowToStep",
+        name: "Get your matched program",
+        text:
+          "Your initial focus area plus your subscale scores are checked against a fixed, rules-based scoring formula to recommend a program and stay length.",
+      },
+    ],
+  }
 
   return (
     <div className="page" style={{ paddingBottom: 100 }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }} />
       <section className="shell" style={{ paddingTop: 24 }}>
         <div className="eyebrow" style={{ marginBottom: 12 }}>Our methodology</div>
         <h1 className="display" style={{ fontSize: "clamp(36px, 8vw, 60px)", margin: "0 0 20px", color: "var(--ink)" }}>
           How the score is <span className="display-italic">built</span>.
         </h1>
         <p className="body-lg" style={{ marginBottom: 40, maxWidth: 700 }}>
-          Your <Link href="/wellness-baseline-score" style={{ color: "var(--accent)" }}>Wellness Baseline Score</Link> comes from 23 short questions across 6 sections, taking a few minutes to complete.
+          Your <Link href="/wellness-baseline-score" style={{ color: "var(--accent)" }}>Wellbeing &amp; Wellness Score (WS)</Link> comes from 23 short questions across 6 sections, taking about 2 minutes to complete.
         </p>
 
         <div className="card" style={{ padding: 28, marginBottom: 24 }}>

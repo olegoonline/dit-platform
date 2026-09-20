@@ -3,7 +3,7 @@ import Script from "next/script"
 import "./globals.css"
 
 const SITE_NAME = "Dream Islands"
-const DEFAULT_TITLE = "Dream Islands — Wellness Travel for Southeast Asia"
+const DEFAULT_TITLE = "Dream Islands — Wellness Travel for Asia"
 const DEFAULT_DESCRIPTION = "We score your wellbeing then match you to a retreat that actually moves the number."
 
 export const metadata: Metadata = {

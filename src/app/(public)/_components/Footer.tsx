@@ -7,17 +7,15 @@ import { TRACKS } from "../_lib/programMapping"
 
 const COMPANY_LINKS = [
   { href: "/about", label: "About" },
-  { href: "/start", label: "Wellness Baseline" },
+  { href: "/start", label: "Get your WS" },
   { href: "mailto:hello@dreamislands.org", label: "Press kit", external: true },
 ]
-
 const CONTACT_LINKS = [
   { href: "https://wa.me/message/HOF2AFIBDYY5J1", label: "WhatsApp consult", external: true },
   { href: "mailto:hello@dreamislands.org", label: "hello@dreamislands.org", external: true },
   { href: "https://www.instagram.com/dreamislands_travel/", label: "Instagram", external: true },
   { href: "https://t.me/", label: "Telegram", external: true },
 ]
-
 const SOCIAL_LINKS = [
   { href: "https://www.instagram.com/dreamislands_travel/", label: "Instagram", icon: Icon.instagram },
   { href: "https://www.linkedin.com/company/dream-islands/", label: "LinkedIn", icon: Icon.linkedin },
@@ -43,11 +41,17 @@ export default async function Footer() {
     .eq("active", true)
     .is("parent_id", null)
     .neq("name", "")
-
   const countries = [...new Set((propRows ?? []).map((p) => p.country).filter(Boolean))] as string[]
 
+  const TRACK_PAGE_SLUGS: Record<string, string> = {
+    Reset: "reset-recovery",
+    Performance: "performance",
+    Mind: "mind-balance",
+    Immersion: "island-immersion",
+    SportChill: "sport-chill",
+  }
   const outcomesLinks: Link[] = TRACKS.map((t) => ({
-    href: `/programs?track=${t.id}`,
+    href: `/tracks/${TRACK_PAGE_SLUGS[t.id] ?? t.id.toLowerCase()}`,
     label: t.label,
   }))
 
@@ -56,7 +60,18 @@ export default async function Footer() {
     { href: "/properties", label: "Properties" },
     { href: "/programs", label: "Programs" },
     { href: "/#tracks", label: "Key Outcomes" },
+    { href: "/guides/burnout-recovery-retreats-southeast-asia", label: "Burnout Recovery Guide" },
+    { href: "/guides/sleep-reset-retreats-asia", label: "Sleep Reset Guide" },
+    { href: "/guides/anxiety-stress-recovery-retreats-asia", label: "Anxiety & Stress Guide" },
+    { href: "/guides/longevity-executive-health-retreats-asia", label: "Longevity & Executive Health Guide" },
+    { href: "/guides/wudang-mountain-wellness-guide", label: "Wudang Mountain Guide" },
+    { href: "/guides/singapore-sentosa-wellness-guide", label: "Singapore & Sentosa Guide" },
+    { href: "/guides/koh-samui-koh-phangan-wellness-guide", label: "Koh Samui & Koh Phangan Guide" },
+    { href: "/guides/bali-wellness-guide", label: "Bali Guide" },
+    { href: "/guides/mile-yunnan-wellness-guide", label: "Mile, Yunnan Guide" },
+    { href: "/guides/boracay-wellness-guide", label: "Boracay Guide" },
     { href: "/partners", label: "Partnership / B2B / MICE" },
+    { href: "/for-properties", label: "For Wellness Properties" },
   ]
 
   return (
@@ -65,8 +80,8 @@ export default async function Footer() {
         <div className="footer-brand">
           <Brand size={36} />
           <p className="body" style={{ marginTop: 16, maxWidth: 320 }}>
-            The AI-matched wellness travel platform for Southeast Asia. Baseline first, retreat
-            second, measured outcomes third.
+            The wellness intelligence and travel platform for Asia. Baseline first.
+            Match intelligently. Measure what changed.
           </p>
           <div style={{ display: "flex", gap: 10, marginTop: 22, flexWrap: "wrap" }}>
             <a
@@ -83,7 +98,7 @@ export default async function Footer() {
               className="btn btn-ghost"
               style={{ padding: "12px 18px", fontSize: 13 }}
             >
-              Take baseline
+              Get your WS
             </Link>
           </div>
           <div style={{ display: "flex", gap: 12, marginTop: 18 }}>
@@ -102,13 +117,11 @@ export default async function Footer() {
             ))}
           </div>
         </div>
-
         <FooterCol title="Explore" links={exploreLinks} />
         <FooterCol title="Outcomes" links={outcomesLinks} />
         <FooterCol title="Company" links={COMPANY_LINKS} />
         <FooterCol title="Stay in touch" links={CONTACT_LINKS} />
       </div>
-
       <div className="footer-locations">
         <div className="eyebrow" style={{ marginBottom: 10 }}>We host in</div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 18, alignItems: "center" }}>
@@ -125,7 +138,6 @@ export default async function Footer() {
           ))}
         </div>
       </div>
-
       <div className="footer-legal">
         <div className="footer-legal-grid">
           <div>
@@ -138,7 +150,6 @@ export default async function Footer() {
               <a href="https://dreamislands.ru" target="_blank" rel="noreferrer" className="footer-link">dreamislands.ru</a>
             </div>
           </div>
-
           <div>
             <div style={{ fontWeight: 600, color: "var(--ink-2)", marginBottom: 8 }}>Disclaimer</div>
             <p className="body-sm" style={{ margin: "0 0 8px", maxWidth: 480 }}>
@@ -152,7 +163,6 @@ export default async function Footer() {
               health-related decisions.
             </p>
           </div>
-
           <div>
             <div style={{ fontWeight: 600, color: "var(--ink-2)", marginBottom: 8 }}>Contacts</div>
             <div className="body-sm" style={{ marginBottom: 4 }}>AI assistant, 24/7</div>
@@ -168,10 +178,9 @@ export default async function Footer() {
           </div>
         </div>
       </div>
-
       <div className="footer-bottom">
         <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
-          <span>© {new Date().getFullYear()} Dream Islands Travel · WBS v1</span>
+          <span>© {new Date().getFullYear()} Dream Islands Travel · WS v1</span>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "var(--ink-3)", fontSize: 12 }}>
             Secure payments powered by
             <Image src="/stripe-logo.png" alt="Stripe" width={60} height={16} style={{ height: 16, width: "auto" }} />

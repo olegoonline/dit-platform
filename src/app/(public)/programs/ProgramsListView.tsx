@@ -6,8 +6,8 @@ import { COUNTRIES, COUNTRY_FLAGS, countryFromSlug } from "../_lib/countries"
 import ProgramCard from "../_components/ProgramCard"
 import { Icon } from "../_components/Icon"
 
-type Filter = "All" | "Reset" | "Performance" | "Mind" | "Immersion"
-const FILTERS: Filter[] = ["All", "Reset", "Performance", "Mind", "Immersion"]
+type Filter = "All" | "Reset" | "Performance" | "Mind" | "Immersion" | "SportChill"
+const FILTERS: Filter[] = ["All", "Reset", "Performance", "Mind", "Immersion", "SportChill"]
 
 function isFilter(s: string): s is Filter {
   return (FILTERS as string[]).includes(s)

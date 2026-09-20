@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/properties" },
   openGraph: {
     title: "All Properties & Destinations | Dream Islands",
-    description: "Explore verified wellness properties and retreat centers across Southeast Asia.",
+    description: "Explore verified wellness properties and retreat centers across Asia.",
     url: "https://dreamislands.org/properties",
   },
 }

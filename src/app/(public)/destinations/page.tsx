@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/destinations" },
   openGraph: {
     title: "Destinations | Dream Islands",
-    description: "Explore Dream Islands wellness destinations across Southeast Asia and China.",
+    description: "Explore Dream Islands wellness destinations across Asia.",
     url: "https://dreamislands.org/destinations",
   },
 }

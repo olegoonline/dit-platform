@@ -8,10 +8,30 @@
   <url><loc>https://dreamislands.org/reviews</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://dreamislands.org/about</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://dreamislands.org/partners</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://dreamislands.org/for-properties</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://dreamislands.org/tanya-samui</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://dreamislands.org/tanya-samui/accommodation</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://dreamislands.org/tanya-samui/faq</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://dreamislands.org/tanya-samui/wellness-menu</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://dreamislands.org/guides/burnout-recovery-retreats-southeast-asia</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dreamislands.org/guides/sleep-reset-retreats-asia</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dreamislands.org/guides/metabolic-health-retreats-asia</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dreamislands.org/guides/mental-clarity-retreats-asia</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dreamislands.org/guides/fitness-recovery-retreats-asia</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dreamislands.org/guides/boost-energy-retreats-asia</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dreamislands.org/guides/anxiety-stress-recovery-retreats-asia</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dreamislands.org/guides/longevity-executive-health-retreats-asia</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dreamislands.org/tracks/reset-recovery</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dreamislands.org/tracks/performance</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dreamislands.org/tracks/mind-balance</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dreamislands.org/tracks/island-immersion</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dreamislands.org/tracks/sport-chill</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dreamislands.org/guides/wudang-mountain-wellness-guide</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dreamislands.org/guides/singapore-sentosa-wellness-guide</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dreamislands.org/guides/koh-samui-koh-phangan-wellness-guide</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dreamislands.org/guides/bali-wellness-guide</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dreamislands.org/guides/mile-yunnan-wellness-guide</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://dreamislands.org/guides/boracay-wellness-guide</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
 
   <url><loc>https://dreamislands.org/programs/signature-program</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://dreamislands.org/programs/bm-package-a-outpatient-fast-track</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>

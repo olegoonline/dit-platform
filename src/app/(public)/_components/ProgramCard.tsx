@@ -29,7 +29,7 @@ export default function ProgramCard({
           />
           <div style={{ position: "absolute", top: 14, left: 14, display: "flex", gap: 6 }}>
             <span className="tag" style={{ background: "rgba(255,255,255,.92)", color: "var(--ink)" }}>
-              {p.track}
+              {p.trackFull}
             </span>
             <span className="tag" style={{ background: "rgba(255,255,255,.92)", color: "var(--ink-2)" }}>
               {p.type}
@@ -82,7 +82,7 @@ export default function ProgramCard({
             fontSize: 11,
           }}
         >
-          <span style={{ width: 6, height: 6, borderRadius: 3, background: p.trackColor }} /> {p.track}
+          <span style={{ width: 6, height: 6, borderRadius: 3, background: p.trackColor }} /> {p.trackFull}
         </span>
         {p.performanceSubtype && (
           <span

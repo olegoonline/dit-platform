@@ -5,6 +5,7 @@ import { supabaseAdmin } from "@/lib/supabase-server"
 import { mapProgram, type DbProgramRow } from "../../_lib/programMapping"
 import ProgramCard from "../../_components/ProgramCard"
 import ReserveModal from "../../_components/ReserveModal"
+import MediaGallery from "../../_components/MediaGallery"
 import type { Metadata } from "next"
 import { dataLayerScript } from "../../_lib/track"
 
@@ -109,6 +110,22 @@ export default async function PropertyDetailPage({
 
   const programs = ((progRows ?? []) as unknown as DbProgramRow[]).map(mapProgram)
 
+  const { data: mediaRows } = await supabaseAdmin
+    .from("media_assets")
+    .select("public_url, alt_ru, title_ru, asset_type, is_featured, sort_order")
+    .eq("property_id", property.id)
+    .eq("active", true)
+    .eq("asset_type", "gallery")
+    .order("sort_order")
+
+  const galleryImages = ((mediaRows ?? []) as unknown as Array<{
+    public_url: string
+    alt_ru: string | null
+    title_ru: string | null
+  }>)
+    .filter((m) => m.public_url && m.public_url.startsWith("http"))
+    .map((m) => ({ url: m.public_url, alt: m.alt_ru || m.title_ru || property.name.trim() }))
+
   const flag = property.country ? (COUNTRY_FLAGS[property.country] ?? "") : ""
   const waHref = property.contact_wa
     ? `https://wa.me/${property.contact_wa.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(`Hi! I'd like to know more about ${property.name.trim()}.`)}`
@@ -131,6 +148,26 @@ export default async function PropertyDetailPage({
   return (
     <div className="page" style={{ paddingBottom: 100 }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(propertyJsonLd) }} />
+      {slug === "mile-wellness-resort" && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "VideoObject",
+              name: "Mile Wellness Resort, Yunnan | TCM, Medical Wellness & Hot Springs in China",
+              description:
+                "Mile Wellness Resort is a premium medical wellness retreat in Mile, Yunnan, China, combining Traditional Chinese Medicine (TCM), functional medicine, modern diagnostics, silica hot springs and restorative wellness. Programs range from short 3-day wellness escapes to 7-14 day deep recovery, executive health and preventive wellness programs.",
+              thumbnailUrl: ["https://i.ytimg.com/vi/fpyzycLUIck/hqdefault.jpg"],
+              uploadDate: "2026-09-01T08:00:25-07:00",
+              duration: "PT1M4S",
+              contentUrl: "https://youtu.be/fpyzycLUIck",
+              embedUrl: "https://www.youtube.com/embed/fpyzycLUIck",
+              publisher: { "@type": "Organization", name: "Dream Islands", url: "https://dreamislands.org" },
+            }),
+          }}
+        />
+      )}
       <script dangerouslySetInnerHTML={{ __html: dataLayerScript("view_property", { property_id: property.id, property_name: property.name, country: property.country, destination_country: property.country }) }} />
       <section className="shell" style={{ paddingTop: 24 }}>
         <Link href="/properties" className="btn btn-ghost" style={{ padding: "8px 14px", fontSize: 13, marginBottom: 24, display: "inline-flex" }}>
@@ -195,6 +232,23 @@ export default async function PropertyDetailPage({
             Message on WhatsApp
           </a>
         </div>
+
+        {galleryImages.length > 0 && <MediaGallery images={galleryImages} title="Gallery" />}
+
+        {slug === "mile-wellness-resort" && (
+          <div style={{ margin: "40px 0" }}>
+            <h2 style={{ fontSize: 22, marginBottom: 16 }}>Watch: Mile Wellness Resort</h2>
+            <div style={{ position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden", borderRadius: 14 }}>
+              <iframe
+                src="https://www.youtube.com/embed/fpyzycLUIck"
+                title="Mile Wellness Resort, Yunnan | TCM, Medical Wellness & Hot Springs in China"
+                style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: 0 }}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        )}
 
         <div className="section-head">
           <div>

@@ -5,11 +5,11 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "All Wellness Programs",
-  description: "Browse outcome-matched wellness programs across Southeast Asia - detox, performance, mind reset and immersion protocols.",
+  description: "Browse outcome-matched wellness programs across Asia - detox, performance, mind reset and immersion protocols.",
   alternates: { canonical: "/programs" },
   openGraph: {
     title: "All Wellness Programs | Dream Islands",
-    description: "Browse outcome-matched wellness programs across Southeast Asia.",
+    description: "Browse outcome-matched wellness programs across Asia.",
     url: "https://dreamislands.org/programs",
   },
 }

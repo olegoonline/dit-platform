@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation"
 import { supabaseAdmin } from "@/lib/supabase-server"
-import { fetchAdminUsers, fetchGuestDataset } from "@/lib/guest-queries"
 import PropertyDetailView, {
   type ProgramLinkRow,
   type RoomRow,
@@ -47,10 +46,6 @@ export default async function AdminPropertyDetail({
   const errorMessage = roomsRes.error?.message ?? programsRes.error?.message ?? null
   if (!propRes.data) notFound()
 
-  const { users } = await fetchAdminUsers(supabaseAdmin)
-  const guestData = await fetchGuestDataset(supabaseAdmin, users)
-  const guests = guestData.rows.filter((r) => r.property_ids.includes(id))
-
   const linkedIds = new Set((ppRes.data ?? []).map((l) => l.program_id as string))
   const allPrograms = (programsRes.data ?? []) as ProgramLinkRow[]
 
@@ -61,9 +56,6 @@ export default async function AdminPropertyDetail({
       programs={allPrograms.filter((p) => linkedIds.has(p.id))}
       attachablePrograms={allPrograms}
       specialists={(specialistsRes.data ?? []) as SpecialistRow[]}
-      guests={guests}
-      guestBookings={guestData.bookings}
-      guestBasePath="/admin/users"
       parentOptions={(parentsRes.data ?? []) as Array<{ id: string; name: string }>}
       backHref="/admin/properties"
       backLabel="Back to properties"

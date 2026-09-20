@@ -81,6 +81,18 @@ export default async function ProgramDetailPage({
 
   const program = data as unknown as ProgramDetail
 
+  const { data: reviewRows } = await supabaseAdmin
+    .from("reviews")
+    .select("*, programs(name, slug)")
+    .eq("status", "published")
+    .in("visibility", ["both", "en"])
+    .not("rating", "is", null)
+    .order("created_at", { ascending: false })
+  const programReviews = ((reviewRows ?? []) as any[]).filter((r) => {
+    const progs = Array.isArray(r.programs) ? r.programs : [r.programs]
+    return progs.some((p: any) => p?.slug === program.slug)
+  })
+
   const confirmedBooking =
     sp.booking === "paid" && sp.session_id
       ? await confirmCheckoutSession(sp.session_id, program.id)
@@ -103,9 +115,40 @@ export default async function ProgramDetailPage({
     accommodations = (accData ?? []) as unknown as AccommodationItem[]
   }
 
+  // Gallery photos: prefer photos tied directly to this program, fall back to the primary property's gallery.
+  let galleryImages: { url: string; alt: string }[] = []
+  const { data: programMedia } = await supabaseAdmin
+    .from("media_assets")
+    .select("public_url, alt_ru, title_ru")
+    .eq("program_id", program.id)
+    .eq("active", true)
+    .eq("asset_type", "gallery")
+    .order("sort_order")
+
+  if (programMedia && programMedia.length > 0) {
+    galleryImages = (programMedia as unknown as Array<{ public_url: string; alt_ru: string | null; title_ru: string | null }>)
+      .filter((m) => m.public_url && m.public_url.startsWith("http"))
+      .map((m) => ({ url: m.public_url, alt: m.alt_ru || m.title_ru || program.name }))
+  } else if (propertyIds.length > 0) {
+    const { data: propMedia } = await supabaseAdmin
+      .from("media_assets")
+      .select("public_url, alt_ru, title_ru")
+      .in("property_id", propertyIds)
+      .eq("active", true)
+      .eq("asset_type", "gallery")
+      .order("sort_order")
+    galleryImages = ((propMedia ?? []) as unknown as Array<{ public_url: string; alt_ru: string | null; title_ru: string | null }>)
+      .filter((m) => m.public_url && m.public_url.startsWith("http"))
+      .map((m) => ({ url: m.public_url, alt: m.alt_ru || m.title_ru || program.name }))
+  }
+
   const activeVariants = (program.program_variants ?? []).filter((v) => v.active)
   const lowestPrice = activeVariants.length > 0 ? Math.min(...activeVariants.map((v) => v.price_basic_usd)) : null
   const primaryProperty = program.program_properties?.[0]?.properties
+  const avgProgramRating =
+    programReviews.length > 0
+      ? programReviews.reduce((sum: number, r: any) => sum + r.rating, 0) / programReviews.length
+      : null
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -133,12 +176,30 @@ export default async function ProgramDetailPage({
           },
         }
       : {}),
+    ...(programReviews.length > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: Math.round(avgProgramRating! * 100) / 100,
+            reviewCount: programReviews.length,
+            bestRating: 5,
+            worstRating: 1,
+          },
+          review: programReviews.map((r: any) => ({
+            "@type": "Review",
+            author: { "@type": "Person", name: r.guest_name || "Guest" },
+            reviewRating: { "@type": "Rating", ratingValue: r.rating, bestRating: 5, worstRating: 1 },
+            ...(r.text_en || r.text_ru ? { reviewBody: r.text_en || r.text_ru } : {}),
+            ...(r.created_at ? { datePublished: String(r.created_at).slice(0, 10) } : {}),
+          })),
+        }
+      : {}),
   }
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script dangerouslySetInnerHTML={{ __html: dataLayerScript("view_program", { program_id: program.id, program_name: program.name, property_id: primaryProperty?.id, property_name: primaryProperty?.name, destination_country: primaryProperty?.country }) }} />
-      <ProgramDetailView program={program} accommodations={accommodations} confirmedBooking={confirmedBooking} />
+      <ProgramDetailView program={program} accommodations={accommodations} confirmedBooking={confirmedBooking} galleryImages={galleryImages} reviews={programReviews} />
     </>
   )
 }

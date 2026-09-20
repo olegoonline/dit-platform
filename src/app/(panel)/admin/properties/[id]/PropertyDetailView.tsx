@@ -34,8 +34,6 @@ import PropertyFormFields, {
   cohortOptions,
   type PropertyFormValues,
 } from "../PropertyFormFields"
-import UsersView from "../../users/UsersView"
-import type { DbBooking, GuestRow } from "@/lib/guest-metrics"
 import type { PropertyRow } from "../PropertiesView"
 
 const { Text, Title } = Typography
@@ -84,9 +82,6 @@ export default function PropertyDetailView({
   programs,
   attachablePrograms,
   specialists,
-  guests,
-  guestBookings,
-  guestBasePath,
   parentOptions,
   backHref,
   backLabel,
@@ -98,9 +93,6 @@ export default function PropertyDetailView({
   programs: ProgramLinkRow[]
   attachablePrograms: ProgramLinkRow[]
   specialists: SpecialistRow[]
-  guests: GuestRow[]
-  guestBookings: DbBooking[]
-  guestBasePath: string
   parentOptions: Array<{ id: string; name: string }>
   backHref: string
   backLabel: string
@@ -159,23 +151,6 @@ export default function PropertyDetailView({
                   canEdit={canEdit.overview}
                 />
               </Card>
-            ),
-          },
-          {
-            key: "guests",
-            label: `Guests (${guests.length})`,
-            children: (
-              <UsersView
-                rows={guests}
-                bookings={guestBookings}
-                programOptions={[]}
-                propertyOptions={[]}
-                activeFilters={{ program: null, property: null }}
-                errorMessage={null}
-                basePath={guestBasePath}
-                role={canEdit.overview ? "admin" : "partner"}
-                embedded
-              />
             ),
           },
           {

@@ -2,11 +2,11 @@ import Link from "next/link"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Wellness Baseline Score (WBS)",
-  description: "The Wellness Baseline Score (WBS) is Dream Islands proprietary 0-100 wellness assessment, combining Body, Recovery, Metabolic Health and Mind subscales to personalize your retreat program.",
+  title: "Wellbeing & Wellness Score (WS)",
+  description: "The Wellbeing & Wellness Score (WS) is Dream Islands proprietary 0-100 wellness assessment, combining Body, Recovery, Metabolic Health and Mind subscales to personalize your retreat program.",
   alternates: { canonical: "/wellness-baseline-score" },
   openGraph: {
-    title: "Wellness Baseline Score (WBS) | Dream Islands",
+    title: "Wellbeing & Wellness Score (WS) | Dream Islands",
     description: "A proprietary 0-100 wellness assessment used to personalize your retreat program.",
     url: "https://dreamislands.org/wellness-baseline-score",
   },
@@ -17,8 +17,8 @@ export default function WbsPage() {
     "@context": "https://schema.org",
     "@type": "DefinedTerm",
     "@id": "https://dreamislands.org/wellness-baseline-score#term",
-    name: "Wellness Baseline Score (WBS)",
-    alternateName: "WBS",
+    name: "Wellbeing & Wellness Score (WS)",
+    alternateName: "WS",
     description: "A proprietary 0-100 wellness assessment developed by Dream Islands, combining four weighted subscales - Body, Recovery, Metabolic Health, and Mind - plus a Risk factor, used to personalize wellness travel program recommendations.",
     inDefinedTermSet: {
       "@type": "DefinedTermSet",
@@ -34,10 +34,10 @@ export default function WbsPage() {
       <section className="shell" style={{ paddingTop: 24 }}>
         <div className="eyebrow" style={{ marginBottom: 12 }}>Our methodology</div>
         <h1 className="display" style={{ fontSize: "clamp(36px, 8vw, 60px)", margin: "0 0 20px", color: "var(--ink)" }}>
-          The Wellness Baseline <span className="display-italic">Score</span>.
+          Your Wellbeing &amp; Wellness <span className="display-italic">Score</span>.
         </h1>
         <p className="body-lg" style={{ marginBottom: 40, maxWidth: 700 }}>
-          WBS is a 0-100 score calculated from a short self-reported assessment, used to personalize
+          WS is a 0-100 score calculated from a short self-reported assessment, used to personalize
           which program and duration we recommend. It is not a medical diagnosis - Dream Islands is a
           Destination Marketing Organization, not a medical institution.
         </p>
