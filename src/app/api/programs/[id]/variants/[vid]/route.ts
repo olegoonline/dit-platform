@@ -8,12 +8,21 @@ type PatchVariantPayload = {
   duration_nights?: number
   price_basic_usd?: number
   price_vip_usd?: number | null
+  price_basic_thb?: number | null
+  price_vip_thb?: number | null
   active?: boolean
   sort_order?: number
 }
 
 function bad(message: string, status = 400) {
   return NextResponse.json({ success: false, error: message }, { status })
+}
+
+// Positive-number-or-null validator for THB fields. Empty must be stored as
+// null (never 0), and we never auto-convert or infer THB from USD.
+function validThbOrNull(v: number | null | undefined): v is number | null {
+  if (v === null || v === undefined) return true
+  return typeof v === "number" && v > 0
 }
 
 export async function PATCH(
@@ -42,6 +51,14 @@ export async function PATCH(
     update.price_basic_usd = body.price_basic_usd
   }
   if (body.price_vip_usd !== undefined) update.price_vip_usd = body.price_vip_usd
+  if (body.price_basic_thb !== undefined) {
+    if (!validThbOrNull(body.price_basic_thb)) return bad("price_basic_thb must be a positive number, or null")
+    update.price_basic_thb = body.price_basic_thb
+  }
+  if (body.price_vip_thb !== undefined) {
+    if (!validThbOrNull(body.price_vip_thb)) return bad("price_vip_thb must be a positive number, or null")
+    update.price_vip_thb = body.price_vip_thb
+  }
   if (body.active !== undefined) update.active = !!body.active
   if (body.sort_order !== undefined) update.sort_order = body.sort_order
 

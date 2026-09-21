@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation"
 import { supabaseAdmin } from "@/lib/supabase-server"
+import { fetchMatchedPrograms } from "@/lib/matched-programs"
 import MatchedView, { type MatchedProgram } from "./MatchedView"
 
 export const dynamic = "force-dynamic"
@@ -45,18 +46,7 @@ export default async function MatchedPage({
     .limit(1)
     .maybeSingle()
 
-  const { data: programs } = await supabaseAdmin
-    .from("programs")
-    .select(
-      "id, name, slug, summary, cohort, tier, duration_days, price_usd, outcomes, is_composite, hero_image_url, " +
-        "program_properties(role, properties(name, island, country, contact_wa)), " +
-        "program_variants(duration_days, duration_nights, price_basic_usd, active)",
-    )
-    .eq("cohort", user.cohort ?? 1)
-    .eq("active", true)
-    .eq("status", "published")
-    .order("price_usd", { ascending: true })
-    .limit(3)
+  const programs = await fetchMatchedPrograms(user.cohort)
 
   const raw = (user.raw_payload ?? {}) as RawPayload
 
@@ -88,7 +78,7 @@ export default async function MatchedPage({
       focus={focus}
       subScores={subScores}
       flags={flags}
-      programs={(programs ?? []) as unknown as MatchedProgram[]}
+      programs={programs as unknown as MatchedProgram[]}
     />
   )
 }

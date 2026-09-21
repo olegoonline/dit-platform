@@ -31,7 +31,8 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import PropertyFormFields, {
-  cohortOptions,
+  CohortTags,
+  useCohortOptions,
   type PropertyFormValues,
 } from "../PropertyFormFields"
 import UsersView from "../../users/UsersView"
@@ -255,17 +256,7 @@ function OverviewTab({
         <Descriptions.Item label="Island">{property.island ?? "—"}</Descriptions.Item>
         <Descriptions.Item label="Country">{property.country ?? "—"}</Descriptions.Item>
         <Descriptions.Item label="Cohort focus">
-          {(property.cohort_tags ?? []).length > 0 ? (
-            <Space size={4} wrap>
-              {(property.cohort_tags ?? []).map((c) => (
-                <Tag key={c} style={{ background: "#E1F5EE", color: "#0F6E56", border: "none" }}>
-                  C{c}
-                </Tag>
-              ))}
-            </Space>
-          ) : (
-            "—"
-          )}
+          <CohortTags ids={property.cohort_tags} subtypeIds={property.performance_subtype_ids} />
         </Descriptions.Item>
         <Descriptions.Item label="WhatsApp">{property.contact_wa ?? "—"}</Descriptions.Item>
         <Descriptions.Item label="Description">{property.description ?? "—"}</Descriptions.Item>
@@ -305,6 +296,7 @@ function OverviewTab({
         island: property.island ?? undefined,
         country: property.country ?? undefined,
         cohort_tags: property.cohort_tags ?? [],
+        performance_subtype_ids: property.performance_subtype_ids ?? [],
         certified: property.certified,
         active: property.active,
         contact_wa: property.contact_wa ?? undefined,
@@ -699,6 +691,7 @@ function SpecialistsTab({
   onDone: () => void
   message: ReturnType<typeof App.useApp>["message"]
 }) {
+  const cohortOptions = useCohortOptions()
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<SpecialistRow | null>(null)
   const [saving, setSaving] = useState(false)
@@ -768,15 +761,7 @@ function SpecialistsTab({
       title: "Cohort focus",
       dataIndex: "cohort_focus",
       key: "cohort_focus",
-      render: (tags: number[] | null) => (
-        <Space size={4} wrap>
-          {(tags ?? []).map((c) => (
-            <Tag key={c} style={{ background: "#E1F5EE", color: "#0F6E56", border: "none" }}>
-              C{c}
-            </Tag>
-          ))}
-        </Space>
-      ),
+      render: (tags: number[] | null) => <CohortTags ids={tags} />,
     },
     {
       title: "Status",
@@ -834,7 +819,7 @@ function SpecialistsTab({
             <Input autoComplete="off" placeholder="Physiotherapist" />
           </Form.Item>
           <Form.Item name="cohort_focus" label="Cohort focus">
-            <Select mode="multiple" options={cohortOptions} placeholder="Pick cohorts" />
+            <Select mode="multiple" options={cohortOptions} placeholder="Pick cohorts" optionFilterProp="label" />
           </Form.Item>
           <Form.Item name="active" label="Active" valuePropName="checked">
             <Switch />

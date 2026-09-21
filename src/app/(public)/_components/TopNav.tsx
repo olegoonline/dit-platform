@@ -3,6 +3,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import Brand from "./Brand"
+import AccountButton from "./account/AccountButton"
 import { COUNTRIES, COUNTRY_FLAGS, countrySlug } from "../_lib/countries"
 
 // Trimmed to the product architecture a first-time visitor needs, in order:
@@ -93,9 +94,12 @@ export default function TopNav({ programs = [] }: { programs?: { id: string; nam
           <span />
           <span />
         </button>
-        <Link href="/start" className="btn btn-primary topnav-cta">
-          Take Assessment
-        </Link>
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <AccountButton />
+          <Link href="/start" className="btn btn-primary topnav-cta">
+            Take Assessment
+          </Link>
+        </div>
       </div>
       {mobileOpen && (
         <div className="topnav-mobile-menu">

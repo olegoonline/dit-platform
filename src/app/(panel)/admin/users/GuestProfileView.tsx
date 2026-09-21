@@ -547,9 +547,14 @@ export default function GuestProfileView({
           </Col>
           {canEdit && (
             <Col>
-              <Button icon={<EditOutlined />} onClick={() => setEditing(true)}>
-                Edit guest
-              </Button>
+              <Space wrap>
+                <Button onClick={() => router.push(`/admin/users/${row.id}/journey`)}>
+                  View guest profile
+                </Button>
+                <Button icon={<EditOutlined />} onClick={() => setEditing(true)}>
+                  Edit guest
+                </Button>
+              </Space>
             </Col>
           )}
         </Row>

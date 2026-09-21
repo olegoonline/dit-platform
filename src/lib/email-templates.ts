@@ -88,7 +88,7 @@ export function bookingConfirmed(args: {
     `<p>Hi ${escape(args.guestName ?? "there")},</p>
      <p>Your stay at <strong>${escape(args.programName)}</strong> is confirmed for ${escape(args.arrival)} → ${escape(args.departure)}.</p>
      <p>We'll reach out by WhatsApp with arrival logistics. You can also see your bookings any time:</p>
-     <p>${btn("Open my dashboard", args.meUrl)}</p>`,
+     <p>${btn("Open my profile", args.meUrl)}</p>`,
   )
   const text = `Stay confirmed — ${args.programName}, ${args.arrival} → ${args.departure}\n${args.meUrl}`
   return { subject, html, text }
@@ -136,6 +136,51 @@ export function magicLink(args: { email: string; link: string }) {
      <p style="font-size:12px;color:#6b7975;margin-top:16px;">If you didn't request this, ignore this email.</p>`,
   )
   const text = `Sign in: ${args.link}\nThe link expires in one hour.`
+  return { subject, html, text }
+}
+
+// ─── guest profile: one-time sign-in code ────────────────
+export function guestLoginCode(args: { guestName: string | null; code: string }) {
+  const hi = args.guestName ? `Hi ${escape(args.guestName)},` : "Hi,"
+  const subject = `${args.code} is your Dream Islands code`
+  const html = layout(
+    "Your sign-in code",
+    `<p>${hi}</p>
+     <p>Enter this code on the Dream Islands site to open your profile:</p>
+     <p style="font-size:32px;font-weight:700;letter-spacing:6px;margin:8px 0 16px;color:#10221c;">${escape(args.code)}</p>
+     <p style="font-size:12px;color:#6b7975;">The code works once and expires in one hour. If you didn't request it, ignore this email.</p>`,
+  )
+  const text = `Your Dream Islands code: ${args.code}\nIt works once and expires in one hour.`
+  return { subject, html, text }
+}
+
+// ─── guest report right after the WS assessment ──────────
+export function guestReport(args: {
+  guestName: string | null
+  score: number | null
+  focus: string | null
+  dimensions: Array<{ label: string; value: number }>
+  profileUrl: string
+}) {
+  const hi = args.guestName ? `Hi ${escape(args.guestName)},` : "Hi,"
+  const rows = args.dimensions
+    .map(
+      (d) => `<tr><td style="padding:6px 0;color:#5b6b65;font-size:14px;">${escape(d.label)}</td>
+        <td style="padding:6px 0;text-align:right;font-weight:600;font-size:14px;">${d.value}</td></tr>`,
+    )
+    .join("")
+  const subject = `Your Wellbeing & Wellness Score: ${args.score ?? "—"}/100`
+  const html = layout(
+    "Your Wellbeing & Wellness Score",
+    `<p>${hi}</p>
+     <p>Thanks for taking the assessment. Here's your baseline.</p>
+     <p style="font-size:44px;font-weight:700;margin:8px 0 0;color:${BRAND_COLOR};">${args.score ?? "—"}<span style="font-size:18px;color:#9aa6a1;">/100</span></p>
+     ${args.focus ? `<p style="margin:4px 0 16px;color:#5b6b65;">${escape(args.focus)}</p>` : ""}
+     <table style="width:100%;border-collapse:collapse;border-top:1px solid #eef1ef;margin-bottom:20px;">${rows}</table>
+     <p>Keep your report in your profile — it tracks how your score changes before, during and after your journey.</p>
+     <p>${btn("View report in profile", args.profileUrl)}</p>`,
+  )
+  const text = `Your Wellbeing & Wellness Score: ${args.score ?? "—"}/100\n${args.dimensions.map((d) => `${d.label}: ${d.value}`).join("\n")}\nView report in profile: ${args.profileUrl}`
   return { subject, html, text }
 }
 

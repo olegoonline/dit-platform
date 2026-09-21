@@ -2,7 +2,12 @@ import { NextResponse } from "next/server"
 import { timingSafeEqual } from "node:crypto"
 import { supabaseAdmin } from "@/lib/supabase-server"
 import { sendEmail, adminInbox } from "@/lib/email"
-import { intakeReceived } from "@/lib/email-templates"
+import { guestReport, intakeReceived } from "@/lib/email-templates"
+import { normalizeEmail } from "@/lib/guest-auth"
+import { reportDimensions } from "@/lib/guest-cabinet"
+import { QUIZ_COOKIE, quizCookieOptions, quizCookieValue } from "@/lib/quiz-cookie"
+import { supabaseServer } from "@/lib/supabase-server"
+import { fetchMatchedPrograms } from "@/lib/matched-programs"
 
 type IntakePayload = {
   name?: string | null
@@ -148,15 +153,7 @@ export async function POST(req: Request) {
       await supabaseAdmin.from("medical_flags").insert(flagRows)
     }
 
-    const { data: programs } = await supabaseAdmin
-      .from("programs")
-      .select(
-        "id, name, cohort, tier, duration_days, price_usd, outcomes, is_composite, program_properties(role, properties(name, island, country))",
-      )
-      .eq("cohort", payload.cohort ?? 1)
-      .eq("active", true)
-      .order("price_usd", { ascending: true })
-      .limit(3)
+    const programs = await fetchMatchedPrograms(payload.cohort)
 
     const inbox = adminInbox()
     if (inbox.length > 0) {
@@ -172,10 +169,55 @@ export async function POST(req: Request) {
       void sendEmail({ to: inbox, ...mail, tag: "intake_received" })
     }
 
-    return NextResponse.json(
-      { success: true, user, assessment, matched_programs: programs ?? [] },
+    // Report email: the result itself, plus a way back to it in the profile.
+    // Sending it doesn't create an account — the guest does that by signing in.
+    const guestEmail = normalizeEmail(user.email)
+    if (guestEmail && payload.source !== "cura") {
+      const publicOrigin =
+        process.env.NODE_ENV === "production"
+          ? (process.env.NEXT_PUBLIC_PUBLIC_SITE_URL ?? new URL(req.url).origin).replace(/\/$/, "")
+          : new URL(req.url).origin
+      const mail = guestReport({
+        guestName: user.name,
+        score: payload.wbs_score ?? null,
+        focus: payload.focus ?? null,
+        dimensions: reportDimensions({
+          sub_body: payload.sub_body ?? null,
+          sub_recovery: payload.sub_recovery ?? null,
+          sub_metabolic: payload.sub_metabolic ?? null,
+          sub_mind: payload.sub_mind ?? null,
+          sub_risk: payload.sub_risk ?? null,
+        }),
+        profileUrl: `${publicOrigin}/profile`,
+      })
+      void sendEmail({ to: guestEmail, ...mail, tag: "guest_report" })
+    }
+
+    // Already signed in on the site? The new result goes straight to their profile.
+    const sb = await supabaseServer()
+    const { data: { user: authUser } } = await sb.auth.getUser()
+    let savedToProfile = false
+    if (authUser?.email) {
+      const { data: role } = await supabaseAdmin.from("profiles").select("role").eq("id", authUser.id).maybeSingle()
+      if ((role?.role ?? "user") === "user") {
+        // The account email is the identity, so this row joins the person's trend.
+        const email = authUser.email.toLowerCase()
+        const { data: linked } = await supabaseAdmin.from("users").select("id").eq("auth_user_id", authUser.id).maybeSingle()
+        await supabaseAdmin
+          .from("users")
+          .update(linked ? { email } : { email, auth_user_id: authUser.id })
+          .eq("id", user.id)
+        savedToProfile = true
+      }
+    }
+
+    const res = NextResponse.json(
+      { success: true, user, assessment, matched_programs: programs, saved_to_profile: savedToProfile },
       { headers: cors },
     )
+    // Lets a sign-in within 7 days claim this result (see quiz-cookie).
+    res.cookies.set(QUIZ_COOKIE, quizCookieValue(user.id), quizCookieOptions)
+    return res
   } catch (err) {
     const message = err instanceof Error ? err.message : "unknown error"
     return NextResponse.json(

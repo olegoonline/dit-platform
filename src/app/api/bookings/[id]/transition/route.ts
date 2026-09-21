@@ -139,22 +139,24 @@ async function notifyTransition(args: {
 }) {
   try {
     const b = args.booking as unknown as BookingShape
-    const panelOrigin = process.env.NEXT_PUBLIC_PANEL_SITE_URL ?? new URL(args.req.url).origin
+    const publicOrigin = (process.env.NEXT_PUBLIC_PUBLIC_SITE_URL ?? new URL(args.req.url).origin).replace(/\/$/, "")
     const guestName = b.users?.name ?? null
     const guestEmail = b.users?.email ?? null
     const programName = b.programs?.name ?? "your stay"
     const arrival = b.arrival ?? ""
     const departure = b.departure ?? ""
-    const meUrl = `${panelOrigin}/me`
+    // Guests follow their stay in the profile on the public site; WS check-ins retake the assessment.
+    const profileUrl = `${publicOrigin}/profile`
+    const assessmentUrl = `${publicOrigin}/start`
 
     if (args.to === "confirmed" && guestEmail) {
-      const mail = bookingConfirmed({ guestName, programName, arrival, departure, meUrl })
+      const mail = bookingConfirmed({ guestName, programName, arrival, departure, meUrl: profileUrl })
       await sendEmail({ to: guestEmail, ...mail, tag: "booking_confirmed" })
     } else if (args.to === "active" && guestEmail) {
-      const mail = preWbsReminder({ guestName, programName, meUrl })
+      const mail = preWbsReminder({ guestName, programName, meUrl: assessmentUrl })
       await sendEmail({ to: guestEmail, ...mail, tag: "pre_wbs_reminder" })
     } else if (args.to === "completed" && guestEmail) {
-      const mail = postWbsReminder({ guestName, programName, meUrl })
+      const mail = postWbsReminder({ guestName, programName, meUrl: assessmentUrl })
       await sendEmail({ to: guestEmail, ...mail, tag: "post_wbs_reminder" })
     } else if (args.to === "cancelled") {
       const inbox = adminInbox()

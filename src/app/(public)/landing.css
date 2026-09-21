@@ -604,3 +604,91 @@ body {
   transition: background .15s, color .15s;
 }
 .topnav-mobile-submenu a:hover { background: var(--accent-soft); color: var(--ink); }
+
+/* ——— Account: header avatar, sign-in modal, profile ——— */
+.acct-login {
+  font-size: 14px; color: var(--ink-2); background: none; border: none; cursor: pointer;
+  font-family: inherit; padding: 8px 4px; letter-spacing: .01em; transition: color .2s; white-space: nowrap;
+}
+.acct-login:hover { color: var(--ink); }
+.acct-avatar {
+  --size: 36px;
+  width: var(--size); height: var(--size); border-radius: 50%;
+  display: inline-grid; place-items: center; flex: 0 0 auto;
+  font-family: var(--font-display); font-size: calc(var(--size) * .4); letter-spacing: .02em;
+  color: var(--accent-ink);
+  background: radial-gradient(120% 120% at 20% 15%, #d9f3e2 0%, var(--accent) 45%, var(--accent-deep) 100%);
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px color-mix(in oklab, var(--accent) 55%, transparent);
+  border: none; cursor: pointer; padding: 0;
+}
+.acct-avatar-lg { --size: 88px; box-shadow: 0 0 0 4px var(--bg), 0 0 0 6px color-mix(in oklab, var(--accent) 50%, transparent), 0 18px 40px -12px color-mix(in oklab, var(--accent) 45%, transparent); }
+.acct-menu {
+  position: absolute; right: 0; top: calc(100% + 12px); min-width: 240px; z-index: 55;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-md);
+  box-shadow: var(--shadow-3); padding: 8px;
+}
+.acct-menu-head { padding: 10px 10px 12px; border-bottom: 1px solid var(--line-2); margin-bottom: 6px; }
+.acct-menu a, .acct-menu button {
+  display: block; width: 100%; text-align: left; font: inherit; font-size: 14px; color: var(--ink-2);
+  padding: 9px 10px; border-radius: 8px; background: none; border: none; cursor: pointer;
+}
+.acct-menu a:hover, .acct-menu button:hover { background: var(--accent-soft); color: var(--ink); }
+.acct-menu a.acct-menu-head {
+  display: flex; align-items: center; gap: 12px; padding: 10px; margin-bottom: 6px;
+  border-bottom: 1px solid var(--line-2); border-radius: 10px 10px 0 0;
+}
+.acct-menu a.acct-menu-head:hover { background: var(--accent-soft); }
+
+.acct-overlay {
+  position: fixed; inset: 0; z-index: 70; background: rgba(12,18,20,.62);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  display: flex; align-items: flex-end; justify-content: center;
+}
+@media (min-width: 720px) { .acct-overlay { align-items: center; padding: 24px; } }
+.acct-sheet {
+  position: relative; width: 100%; max-width: 440px; max-height: 94dvh; overflow-y: auto;
+  background: var(--bg); border: 1px solid var(--line); box-shadow: var(--shadow-3);
+  border-radius: var(--r-xl) var(--r-xl) 0 0; animation: rise .35s ease both;
+}
+@media (min-width: 720px) { .acct-sheet { border-radius: var(--r-xl); } }
+.acct-sheet.split { max-width: 860px; display: grid; }
+@media (min-width: 720px) { .acct-sheet.split { grid-template-columns: 1fr 1.1fr; } }
+.save-block { display: grid; margin-top: 16px; }
+@media (min-width: 720px) { .save-block { grid-template-columns: 1fr 1.15fr; } }
+.acct-pane { padding: 28px 24px 30px; }
+@media (min-width: 720px) { .acct-pane { padding: 40px 36px; } }
+.acct-success {
+  background: radial-gradient(120% 90% at 0% 0%, color-mix(in oklab, var(--accent) 16%, transparent), transparent 70%), var(--surface-2);
+  border-bottom: 1px solid var(--line-2);
+}
+@media (min-width: 720px) { .acct-success { border-bottom: none; border-right: 1px solid var(--line-2); display: flex; flex-direction: column; justify-content: center; } }
+.acct-check {
+  width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--accent); color: var(--accent-ink); margin-bottom: 16px;
+  box-shadow: 0 10px 30px -10px color-mix(in oklab, var(--accent) 70%, transparent);
+}
+.acct-close {
+  position: absolute; top: 14px; right: 14px; width: 34px; height: 34px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--surface-2); color: var(--ink-2);
+  border: 1px solid var(--line); cursor: pointer; z-index: 1;
+}
+.acct-close:hover { color: var(--ink); }
+.acct-code { font-size: 26px; letter-spacing: .5em; text-align: center; font-variant-numeric: tabular-nums; padding-left: calc(16px + .5em); }
+.acct-link { background: none; border: none; padding: 0; font: inherit; font-size: 13px; color: var(--accent); cursor: pointer; }
+.acct-link:disabled { color: var(--ink-3); cursor: default; }
+.acct-error { padding: 10px 14px; border-radius: 12px; background: rgba(214,96,78,.14); color: #f0a595; font-size: 13px; }
+
+.profile-hero { padding: 36px 0 8px; display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.profile-tabs { display: flex; gap: 6px; overflow-x: auto; padding: 18px 0 4px; scrollbar-width: none; }
+.profile-tabs::-webkit-scrollbar { display: none; }
+.profile-tabs a {
+  flex: 0 0 auto; padding: 10px 16px; border-radius: var(--r-pill); font-size: 14px; color: var(--ink-2);
+  border: 1px solid var(--line); transition: background .2s, color .2s, border-color .2s;
+}
+.profile-tabs a:hover { color: var(--ink); border-color: color-mix(in oklab, var(--accent) 40%, transparent); }
+.profile-tabs a.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.profile-grid { display: grid; gap: 16px; padding: 20px 0 64px; }
+.profile-card { padding: 24px; }
+@media (min-width: 900px) { .profile-card { padding: 32px; } }
+.profile-goal { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; color: var(--ink-2); }
+.profile-goal-dot { flex: 0 0 auto; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; margin-top: 1px; }

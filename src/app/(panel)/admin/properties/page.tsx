@@ -1,5 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase-server"
 import PropertiesView, { type PropertyRow } from "./PropertiesView"
+import { CohortCatalogProvider } from "./PropertyFormFields"
+import { fetchCohortCatalog } from "@/lib/cohorts"
 
 export const dynamic = "force-dynamic"
 
@@ -7,7 +9,7 @@ export default async function Properties() {
   const { data, error } = await supabaseAdmin
     .from("properties")
     .select(
-      "id, name, slug, parent_id, island, country, cohort_tags, certified, active, contact_wa, description, created_at",
+      "id, name, slug, parent_id, island, country, cohort_tags, performance_subtype_ids, certified, active, contact_wa, description, created_at",
     )
     .order("created_at")
 
@@ -21,11 +23,14 @@ export default async function Properties() {
 
   const parentOptions = rows.filter((r) => !r.parent_id).map((r) => ({ id: r.id, name: r.name }))
 
+  const catalog = await fetchCohortCatalog()
   return (
-    <PropertiesView
-      rows={enriched}
-      parentOptions={parentOptions}
-      errorMessage={error?.message ?? null}
-    />
+    <CohortCatalogProvider catalog={catalog}>
+      <PropertiesView
+        rows={enriched}
+        parentOptions={parentOptions}
+        errorMessage={error?.message ?? null}
+      />
+    </CohortCatalogProvider>
   )
 }

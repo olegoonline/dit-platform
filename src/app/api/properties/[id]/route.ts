@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { supabaseAdmin } from "@/lib/supabase-server"
 import { getSessionUser } from "@/lib/auth"
+import { cleanCohortSelection, fetchCohortCatalog, syncPropertyTracks } from "@/lib/cohorts"
 
 type PatchPayload = {
   name?: string
@@ -9,6 +10,7 @@ type PatchPayload = {
   island?: string
   country?: string
   cohort_tags?: number[]
+  performance_subtype_ids?: number[]
   certified?: boolean
   active?: boolean
   contact_wa?: string | null
@@ -30,7 +32,7 @@ export async function GET(
   const { data, error } = await supabaseAdmin
     .from("properties")
     .select(
-      "id, name, slug, parent_id, island, country, cohort_tags, certified, active, contact_wa, description, created_at",
+      "id, name, slug, parent_id, island, country, cohort_tags, performance_subtype_ids, certified, active, contact_wa, description, created_at",
     )
     .eq("id", id)
     .maybeSingle()
@@ -59,10 +61,20 @@ export async function PATCH(
   if (body.parent_id !== undefined) update.parent_id = body.parent_id || null
   if (body.island !== undefined) update.island = body.island.trim() || null
   if (body.country !== undefined) update.country = body.country.trim() || null
-  if (body.cohort_tags !== undefined)
-    update.cohort_tags = Array.isArray(body.cohort_tags)
-      ? body.cohort_tags.filter((n) => Number.isInteger(n) && n >= 1 && n <= 4)
-      : []
+  if (body.cohort_tags !== undefined || body.performance_subtype_ids !== undefined) {
+    let tags = body.cohort_tags
+    let subs = body.performance_subtype_ids
+    if (tags === undefined || subs === undefined) {
+      const { data: cur } = await supabaseAdmin
+        .from("properties")
+        .select("cohort_tags, performance_subtype_ids")
+        .eq("id", id)
+        .maybeSingle()
+      tags = tags ?? cur?.cohort_tags ?? []
+      subs = subs ?? cur?.performance_subtype_ids ?? []
+    }
+    Object.assign(update, cleanCohortSelection(await fetchCohortCatalog(), tags, subs))
+  }
   if (body.certified !== undefined) update.certified = !!body.certified
   if (body.active !== undefined) update.active = !!body.active
   if (body.contact_wa !== undefined) update.contact_wa = body.contact_wa?.trim() || null
@@ -75,10 +87,11 @@ export async function PATCH(
     .update(update)
     .eq("id", id)
     .select(
-      "id, name, slug, parent_id, island, country, cohort_tags, certified, active, contact_wa, description, created_at",
+      "id, name, slug, parent_id, island, country, cohort_tags, performance_subtype_ids, certified, active, contact_wa, description, created_at",
     )
     .single()
   if (error || !data) return bad(error?.message ?? "update failed")
+  if (update.cohort_tags !== undefined) await syncPropertyTracks(id, data.cohort_tags ?? [])
   return NextResponse.json({ success: true, property: data })
 }
 

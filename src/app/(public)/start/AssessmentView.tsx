@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
-import { useRouter } from "next/navigation"
 import {
   WBS_QUESTIONS,
   WBS_SECTION_LABELS,
@@ -12,6 +11,8 @@ import {
 } from "@/lib/wbs"
 import { Icon } from "../_components/Icon"
 import { track } from "../_lib/track"
+import SaveResultBlock from "./SaveResultBlock"
+import MatchedPrograms, { type MatchedProgram } from "../_components/MatchedPrograms"
 
 const ALL_QUESTIONS = WBS_QUESTIONS.filter(
   (q): q is Extract<WbsQuestion, { type: "choice" }> | Extract<WbsQuestion, { type: "height_weight" }> =>
@@ -22,7 +23,6 @@ type Phase = "questions" | "contact" | "submitting" | "done"
 type ContactForm = { name: string; whatsapp: string; email: string; country: string }
 
 export default function AssessmentView() {
-  const router = useRouter()
   const total = ALL_QUESTIONS.length
 
   const [step, setStep] = useState(0)
@@ -31,6 +31,9 @@ export default function AssessmentView() {
   const [contact, setContact] = useState<ContactForm>({ name: "", whatsapp: "", email: "", country: "" })
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [score, setScore] = useState<WbsResult | null>(null)
+  const [matchedId, setMatchedId] = useState<string | null>(null)
+  const [matchedPrograms, setMatchedPrograms] = useState<MatchedProgram[]>([])
+  const [savedToProfile, setSavedToProfile] = useState(false)
 
   const scrollerRef = useRef<HTMLDivElement>(null)
 
@@ -119,9 +122,11 @@ export default function AssessmentView() {
         return
       }
       setScore(result)
+      setMatchedId(json.user.id)
+      setMatchedPrograms((json.matched_programs ?? []) as MatchedProgram[])
+      setSavedToProfile(!!json.saved_to_profile)
       setPhase("done")
       track("wbs_complete", { wbs_score: result.total, cohort: result.cohort })
-      setTimeout(() => router.push(`/matched/${json.user.id}`), 2200)
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Network error")
       setPhase("contact")
@@ -319,7 +324,7 @@ export default function AssessmentView() {
                   />
                 </label>
                 <label style={{ display: "block" }}>
-                  <div className="eyebrow" style={{ marginBottom: 6 }}>Email (optional)</div>
+                  <div className="eyebrow" style={{ marginBottom: 6 }}>Email (optional) · we&apos;ll email your report</div>
                   <input
                     className="field"
                     type="email"
@@ -375,10 +380,36 @@ export default function AssessmentView() {
                   <span className="display-italic">Beautiful.</span>
                 </h2>
                 <p className="body" style={{ margin: "0 0 16px" }}>
-                  Redirecting to your matched programmes…
+                  Here&apos;s your baseline — and the programmes built for it are just below.
                 </p>
                 <ScoreReveal score={score} />
               </div>
+
+              <SaveResultBlock
+                initialEmail={contact.email.trim() || undefined}
+                alreadySaved={savedToProfile}
+              />
+
+              {matchedId && (
+                <div style={{ marginTop: 40 }}>
+                  <MatchedPrograms
+                    userId={matchedId}
+                    name={contact.name.trim() || null}
+                    programs={matchedPrograms}
+                    heading={
+                      <div style={{ marginBottom: 22 }}>
+                        <div className="eyebrow" style={{ marginBottom: 10 }}>Matched to your score · {score.focus}</div>
+                        <h2 className="display" style={{ margin: "0 0 10px", fontSize: "clamp(30px, 7vw, 44px)", color: "var(--ink)" }}>
+                          Made for a baseline <span className="display-italic" style={{ color: "var(--accent)" }}>like yours</span>.
+                        </h2>
+                        <p className="body" style={{ margin: 0 }}>
+                          Reserve dates right here, or chat with us on WhatsApp — we&apos;ll tune the programme to you.
+                        </p>
+                      </div>
+                    }
+                  />
+                </div>
+              )}
             </div>
           )}
         </div>

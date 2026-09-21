@@ -32,7 +32,7 @@ import {
 import type { ColumnsType } from "antd/es/table"
 import dayjs, { type Dayjs } from "dayjs"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo, useRef, useState, type MutableRefObject } from "react"
 import HeroImageUpload from "./HeroImageUpload"
 
@@ -59,6 +59,8 @@ type Variant = {
   duration_nights: number
   price_basic_usd: number
   price_vip_usd: number | null
+  price_basic_thb: number | null
+  price_vip_thb: number | null
   active: boolean
   sort_order: number
 }
@@ -144,7 +146,14 @@ export default function EditView({
   propertyOptions: PropertyOption[]
   serviceOptions: ServiceOption[]
 }) {
-  const [tab, setTab] = useState("overview")
+  // Allows deep-linking straight to a tab, e.g. the pricing-gaps report
+  // linking to ?tab=variants on the relevant program's editor.
+  const searchParams = useSearchParams()
+  const requestedTab = searchParams.get("tab")
+  const validTabs = ["overview", "content", "variants", "schedule", "services"]
+  const [tab, setTab] = useState(
+    requestedTab && validTabs.includes(requestedTab) ? requestedTab : "overview",
+  )
   const overviewSaveRef = useRef<TabSaveFn | null>(null)
   const contentSaveRef = useRef<TabSaveFn | null>(null)
 
@@ -633,6 +642,8 @@ type VariantFormValues = {
   duration_nights: number
   price_basic_usd: number
   price_vip_usd?: number | null
+  price_basic_thb?: number | null
+  price_vip_thb?: number | null
   active?: boolean
   sort_order?: number
 }
@@ -660,6 +671,8 @@ function VariantsTab({ program }: { program: ProgramFull }) {
       duration_nights: v.duration_nights,
       price_basic_usd: v.price_basic_usd,
       price_vip_usd: v.price_vip_usd ?? undefined,
+      price_basic_thb: v.price_basic_thb ?? undefined,
+      price_vip_thb: v.price_vip_thb ?? undefined,
       active: v.active,
       sort_order: v.sort_order,
     })
@@ -672,10 +685,18 @@ function VariantsTab({ program }: { program: ProgramFull }) {
       const url = editing
         ? `/api/programs/${program.id}/variants/${editing.id}`
         : `/api/programs/${program.id}/variants`
+      const payload = {
+        ...values,
+        // Empty/cleared THB inputs must persist as null, never 0 or omitted —
+        // antd InputNumber reports a cleared field as undefined, so normalize
+        // explicitly rather than relying on JSON.stringify to drop the key.
+        price_basic_thb: values.price_basic_thb === undefined ? null : values.price_basic_thb,
+        price_vip_thb: values.price_vip_thb === undefined ? null : values.price_vip_thb,
+      }
       const res = await fetch(url, {
         method: editing ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify(payload),
       })
       const json = await res.json()
       if (!res.ok || !json.success) {
@@ -718,6 +739,23 @@ function VariantsTab({ program }: { program: ProgramFull }) {
       render: (v: number | null) => (v == null ? "—" : `$${Number(v).toLocaleString()}`),
     },
     {
+      title: "Basic, ฿",
+      dataIndex: "price_basic_thb",
+      width: 110,
+      render: (v: number | null) =>
+        v == null ? (
+          <Text type="danger">missing</Text>
+        ) : (
+          `฿${Number(v).toLocaleString()}`
+        ),
+    },
+    {
+      title: "VIP, ฿",
+      dataIndex: "price_vip_thb",
+      width: 100,
+      render: (v: number | null) => (v == null ? "—" : `฿${Number(v).toLocaleString()}`),
+    },
+    {
       title: "Active",
       dataIndex: "active",
       width: 80,
@@ -744,6 +782,8 @@ function VariantsTab({ program }: { program: ProgramFull }) {
       <Row justify="space-between" style={{ marginBottom: 16 }}>
         <Text type="secondary">
           Each variant is one bookable duration (e.g. 6D/5N). Basic/VIP pricing per variant.
+          Stripe checkout only activates for a variant once it's Active with a duration and a
+          Basic THB price.
         </Text>
         <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
           Add variant
@@ -794,6 +834,50 @@ function VariantsTab({ program }: { program: ProgramFull }) {
               </Form.Item>
             </Col>
           </Row>
+          <Row gutter={12}>
+            <Col span={12}>
+              <Form.Item
+                name="price_basic_thb"
+                label="Basic price (฿ THB)"
+                tooltip="Required for Stripe checkout to activate on this variant. Leave empty if unknown — do not guess or convert from USD."
+                rules={[
+                  {
+                    validator: async (_rule, v) => {
+                      if (v === null || v === undefined) return
+                      if (typeof v === "number" && v > 0) return
+                      throw new Error("Must be a positive number, or left empty")
+                    },
+                  },
+                ]}
+              >
+                <InputNumber min={0} step={1000} style={{ width: "100%" }} placeholder="e.g. 45000" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="price_vip_thb"
+                label="VIP price (฿ THB)"
+                tooltip="Optional. The current booking flow only reads the Basic THB price — VIP is not yet selectable at checkout."
+                rules={[
+                  {
+                    validator: async (_rule, v) => {
+                      if (v === null || v === undefined) return
+                      if (typeof v === "number" && v > 0) return
+                      throw new Error("Must be a positive number, or left empty")
+                    },
+                  },
+                ]}
+              >
+                <InputNumber min={0} step={1000} style={{ width: "100%" }} placeholder="optional" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Alert
+            type="warning"
+            showIcon
+            style={{ marginBottom: 16 }}
+            message="Publishing a Basic THB price on an active variant enables live Stripe deposit checkout for this program immediately — no separate toggle."
+          />
           <Row gutter={12}>
             <Col span={12}>
               <Form.Item name="sort_order" label="Sort order">

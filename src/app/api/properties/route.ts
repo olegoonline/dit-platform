@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { supabaseAdmin, supabaseServer } from "@/lib/supabase-server"
 import { getSessionUser } from "@/lib/auth"
+import { cleanCohortSelection, fetchCohortCatalog, syncPropertyTracks } from "@/lib/cohorts"
 
 type CreatePropertyPayload = {
   name?: string
@@ -9,6 +10,7 @@ type CreatePropertyPayload = {
   island?: string
   country?: string
   cohort_tags?: number[]
+  performance_subtype_ids?: number[]
   certified?: boolean
   active?: boolean
   contact_wa?: string | null
@@ -79,9 +81,7 @@ export async function POST(req: Request) {
     parent_id: body.parent_id ?? null,
     island: body.island?.trim() || null,
     country: body.country?.trim() || null,
-    cohort_tags: Array.isArray(body.cohort_tags)
-      ? body.cohort_tags.filter((n) => Number.isInteger(n) && n >= 1 && n <= 4)
-      : [],
+    ...cleanCohortSelection(await fetchCohortCatalog(), body.cohort_tags, body.performance_subtype_ids),
     certified: !!body.certified,
     active: body.active ?? true,
     contact_wa: body.contact_wa?.trim() || null,
@@ -92,9 +92,10 @@ export async function POST(req: Request) {
     .from("properties")
     .insert(insert)
     .select(
-      "id, name, slug, parent_id, island, country, cohort_tags, certified, active, contact_wa, description, created_at",
+      "id, name, slug, parent_id, island, country, cohort_tags, performance_subtype_ids, certified, active, contact_wa, description, created_at",
     )
     .single()
   if (error) return badJson(error.message)
+  await syncPropertyTracks(data.id, data.cohort_tags ?? [])
   return NextResponse.json({ success: true, property: data }, { headers: cors })
 }

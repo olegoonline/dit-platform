@@ -25,7 +25,7 @@ import { rowNav } from "../../_components/rowNav"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import PropertyFormFields, { type PropertyFormValues } from "./PropertyFormFields"
+import PropertyFormFields, { CohortTags, type PropertyFormValues } from "./PropertyFormFields"
 
 const { Text, Title } = Typography
 
@@ -38,6 +38,7 @@ export type PropertyRow = {
   island: string | null
   country: string | null
   cohort_tags: number[] | null
+  performance_subtype_ids?: number[] | null
   certified: boolean
   active: boolean
   contact_wa: string | null
@@ -79,6 +80,7 @@ export default function PropertiesView({
       island: p.island ?? undefined,
       country: p.country ?? undefined,
       cohort_tags: p.cohort_tags ?? [],
+      performance_subtype_ids: p.performance_subtype_ids ?? [],
       certified: p.certified,
       active: p.active,
       contact_wa: p.contact_wa ?? undefined,
@@ -152,15 +154,7 @@ export default function PropertiesView({
       title: "Cohorts",
       dataIndex: "cohort_tags",
       key: "cohort_tags",
-      render: (tags: number[] | null) => (
-        <Space size={4} wrap>
-          {(tags ?? []).map((c) => (
-            <Tag key={c} color="green" style={{ background: "#E1F5EE", color: "#0F6E56", border: "none" }}>
-              C{c}
-            </Tag>
-          ))}
-        </Space>
-      ),
+      render: (tags: number[] | null, p) => <CohortTags ids={tags} subtypeIds={p.performance_subtype_ids} />,
     },
     {
       title: "Status",

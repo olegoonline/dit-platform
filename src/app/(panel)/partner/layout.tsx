@@ -19,7 +19,7 @@ const navItems: NavItem[] = [
     key: "/partner",
     href: "/partner",
     icon: <AppstoreOutlined />,
-    label: "Programs",
+    label: "Insights",
   },
   {
     key: "/partner/guests",
@@ -43,7 +43,7 @@ export default async function PartnerLayout({
   const user = await getSessionUser()
   if (!user) redirect("/login")
   if (user.role === "admin") redirect("/admin")
-  if (user.role === "user") redirect("/me")
+  if (user.role === "user") redirect(`${(process.env.NEXT_PUBLIC_PUBLIC_SITE_URL ?? "").replace(/\/$/, "")}/profile`)
 
   return (
     <Shell email={user.email} navItems={navItems} brand="Partner Portal">

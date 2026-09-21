@@ -22,13 +22,13 @@ export default async function Root() {
     if (!user) redirect("/login")
     if (user.role === "admin") redirect("/admin")
     if (user.role === "partner") redirect("/partner")
-    redirect("/me")
+    // Guests live on the public site, not the staff panel.
+    redirect(`${(process.env.NEXT_PUBLIC_PUBLIC_SITE_URL ?? "").replace(/\/$/, "")}/profile`)
   }
 
   if (!isPublic) {
     if (user?.role === "admin") redirect("/admin")
     if (user?.role === "partner") redirect("/partner")
-    if (user?.role === "user") redirect("/me")
   }
 
   const { data: rows } = await supabaseAdmin

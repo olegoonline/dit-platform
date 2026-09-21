@@ -8,7 +8,6 @@ export default async function StartPage() {
   const user = await getSessionUser()
   if (user?.role === "admin") redirect("/admin")
   if (user?.role === "partner") redirect("/partner")
-  if (user?.role === "user") redirect("/me")
 
   return <AssessmentView />
 }
