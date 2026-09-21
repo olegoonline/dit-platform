@@ -6,7 +6,7 @@ import { generatePassword } from "@/lib/password"
 type InvitePayload = {
   email?: string
   role?: "admin" | "partner" | "user"
-  partner_property_id?: string | null
+  partner_property_ids?: string[]
   full_name?: string | null
 }
 
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
   const email = (body.email ?? "").trim().toLowerCase()
   const role: "admin" | "partner" | "user" = body.role ?? "partner"
-  const propertyId = body.partner_property_id ?? null
+  const propertyIds = Array.from(new Set(body.partner_property_ids ?? []))
   const fullName = body.full_name?.trim() || null
 
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -36,8 +36,8 @@ export async function POST(req: Request) {
   if (!["admin", "partner", "user"].includes(role)) {
     return bad("role must be admin, partner or user")
   }
-  if (role === "partner" && !propertyId) {
-    return bad("partner_property_id required when role=partner")
+  if (role === "partner" && propertyIds.length === 0) {
+    return bad("partner_property_ids required when role=partner")
   }
 
   const password = generatePassword(16)
@@ -55,7 +55,8 @@ export async function POST(req: Request) {
 
   const profileUpdate: Record<string, unknown> = {
     role,
-    partner_property_id: role === "partner" ? propertyId : null,
+    // Dual-write: RLS still scopes off this column until migration 18 lands.
+    partner_property_id: role === "partner" ? propertyIds[0] ?? null : null,
     full_name: fullName,
     password_set_by_admin: true,
   }
@@ -69,6 +70,13 @@ export async function POST(req: Request) {
     return bad(`profile update failed: ${profileErr.message}`)
   }
 
+  if (role === "partner" && propertyIds.length > 0) {
+    const { error: linkErr } = await supabaseAdmin
+      .from("partner_properties")
+      .insert(propertyIds.map((pid) => ({ profile_id: userId, property_id: pid })))
+    if (linkErr) return bad(`property link failed: ${linkErr.message}`)
+  }
+
   await supabaseAdmin.from("partner_password_resets").insert({
     user_id: userId,
     reset_by: me.id,
@@ -77,7 +85,7 @@ export async function POST(req: Request) {
 
   return NextResponse.json({
     success: true,
-    user: { id: userId, email, role, partner_property_id: propertyId, full_name: fullName },
+    user: { id: userId, email, role, partner_property_ids: propertyIds, full_name: fullName },
     password,
   })
 }

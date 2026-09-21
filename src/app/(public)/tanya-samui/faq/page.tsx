@@ -1,5 +1,17 @@
 import Link from "next/link"
 import { supabaseAdmin } from "@/lib/supabase-server"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Tanya Samui — Frequently Asked Questions",
+  description: "23 answers covering the Tanya Samui protocol, WS tracking, payment, medical safety and arrival logistics.",
+  alternates: { canonical: "/tanya-samui/faq" },
+  openGraph: {
+    title: "Tanya Samui — Frequently Asked Questions | Dream Islands",
+    description: "23 answers covering the Tanya Samui protocol, WS tracking, payment, medical safety and arrival logistics.",
+    url: "https://dreamislands.org/tanya-samui/faq",
+  },
+}
 
 export const dynamic = "force-dynamic"
 
@@ -13,7 +25,7 @@ type FaqRow = {
 
 const CATEGORY_LABELS: Record<string, string> = {
   general: "General",
-  wbs: "Wellness Baseline",
+  wbs: "WS",
   payment: "Payment",
   medical: "Medical & Safety",
   logistics: "Arrival & Logistics",
@@ -42,8 +54,22 @@ export default async function TanyaFaqPage() {
     ...Object.keys(byCategory).filter((c) => !CATEGORY_ORDER.includes(c)),
   ]
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.question_en,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: f.answer_en,
+      },
+    })),
+  }
+
   return (
     <div className="page" style={{ paddingBottom: 100 }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <section className="shell" style={{ paddingTop: 24 }}>
         <Link href="/tanya-samui" className="btn btn-ghost" style={{ padding: "8px 14px", fontSize: 13, marginBottom: 24, display: "inline-flex" }}>
           {"←"} Tanya Samui

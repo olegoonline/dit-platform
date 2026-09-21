@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { supabaseAdmin } from "@/lib/supabase-server"
 import { getSessionUser } from "@/lib/auth"
+import { partnerCanSeeGuest } from "@/lib/partner-scope"
 
 const MAX_DAYS = 30
 
@@ -8,33 +9,15 @@ function bad(message: string, status = 400) {
   return NextResponse.json({ success: false, error: message }, { status })
 }
 
-async function partnerCanSeeGuest(
-  partnerPropertyId: string,
-  guestId: string,
-): Promise<boolean> {
-  const { data } = await supabaseAdmin
-    .from("bookings")
-    .select("program_id, programs!inner(program_properties!inner(property_id))")
-    .eq("user_id", guestId)
-  for (const row of (data ?? []) as unknown as Array<{
-    programs: { program_properties: Array<{ property_id: string }> } | null
-  }>) {
-    for (const pp of row.programs?.program_properties ?? []) {
-      if (pp.property_id === partnerPropertyId) return true
-    }
-  }
-  return false
-}
-
 async function authorize(userId: string) {
   const me = await getSessionUser()
   if (!me) return { error: bad("unauthorized", 401) as NextResponse }
   const isAdmin = me.role === "admin"
-  const isPartner = me.role === "partner" && !!me.partner_property_id
+  const isPartner = me.role === "partner" && me.partner_property_ids.length > 0
   const isSelf = me.guest_user_id === userId
   if (!isAdmin && !isPartner && !isSelf) return { error: bad("forbidden", 403) }
   if (isPartner && !isAdmin && !isSelf) {
-    const ok = await partnerCanSeeGuest(me.partner_property_id!, userId)
+    const ok = await partnerCanSeeGuest(me.partner_property_ids, userId)
     if (!ok) return { error: bad("forbidden", 403) }
   }
   return { me, isAdmin, isPartner, isSelf }

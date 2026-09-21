@@ -67,9 +67,11 @@ function formatDelta(metric: string | null, v: number | null) {
 export default function SpecialistsView({
   rows,
   specialists,
+  propertyOptions,
 }: {
   rows: SpecialistRow[]
   specialists: SpecialistRecord[]
+  propertyOptions: Array<{ id: string; name: string }>
 }) {
   const router = useRouter()
   const { notification } = App.useApp()
@@ -82,6 +84,7 @@ export default function SpecialistsView({
     role?: string
     cohort_focus?: number[]
     active?: boolean
+    property_id?: string
   }) {
     setSaving(true)
     try {
@@ -93,6 +96,8 @@ export default function SpecialistsView({
           role: values.role ?? null,
           cohort_focus: values.cohort_focus ?? [],
           active: values.active ?? true,
+          // With one property the server infers it; with several it must be explicit.
+          property_id: values.property_id ?? propertyOptions[0]?.id,
         }),
       })
       const json = await res.json()
@@ -310,6 +315,7 @@ export default function SpecialistsView({
         onSubmit={onCreate}
         loading={saving}
         title="Add specialist"
+        propertyOptions={propertyOptions}
       />
       <SpecialistFormModal
         open={!!editTarget}
@@ -330,6 +336,7 @@ function SpecialistFormModal({
   loading,
   title,
   initial,
+  propertyOptions,
 }: {
   open: boolean
   onCancel: () => void
@@ -338,10 +345,12 @@ function SpecialistFormModal({
     role?: string
     cohort_focus?: number[]
     active?: boolean
+    property_id?: string
   }) => void
   loading: boolean
   title: string
   initial?: SpecialistRecord | null
+  propertyOptions?: Array<{ id: string; name: string }>
 }) {
   const [form] = Form.useForm()
 
@@ -374,6 +383,20 @@ function SpecialistFormModal({
         <Form.Item name="name" label="Name" rules={[{ required: true, message: "Required" }]}>
           <Input autoComplete="off" placeholder="Dr. Nida Phongsri" />
         </Form.Item>
+        {!initial && (propertyOptions?.length ?? 0) > 1 && (
+          <Form.Item
+            name="property_id"
+            label="Property"
+            rules={[{ required: true, message: "Pick the property this specialist works at" }]}
+          >
+            <Select
+              options={(propertyOptions ?? []).map((p) => ({ value: p.id, label: p.name }))}
+              placeholder="Select property"
+              showSearch
+              optionFilterProp="label"
+            />
+          </Form.Item>
+        )}
         <Form.Item name="role" label="Role / specialty">
           <Input autoComplete="off" placeholder="Medical Detox Lead" />
         </Form.Item>

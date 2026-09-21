@@ -1,9 +1,22 @@
+import Image from "next/image"
 import Link from "next/link"
+import type { Metadata } from "next"
 import { supabaseAdmin } from "@/lib/supabase-server"
 import { mapProgram, type DbProgramRow } from "../_lib/programMapping"
 import ProgramCard from "../_components/ProgramCard"
 import { ReviewCard, type Review } from "../_components/ReviewsSection"
 import { Icon } from "../_components/Icon"
+
+export const metadata: Metadata = {
+  title: "Tanya Samui Holistic Health Retreat",
+  description: "Tanya Samui on Koh Samui, Thailand — one of the longest-standing properties in the Dream Islands network. Detox protocols, medical wellness, and signature programs since 2009.",
+  alternates: { canonical: "/tanya-samui" },
+  openGraph: {
+    title: "Tanya Samui Holistic Health Retreat | Dream Islands",
+    description: "Detox protocols, medical wellness, and signature programs on Koh Samui, Thailand, since 2009.",
+    url: "https://dreamislands.org/tanya-samui",
+  },
+}
 
 export const dynamic = "force-dynamic"
 
@@ -43,7 +56,7 @@ const INDICATIONS = [
   "Want to support a healthy weight with real structure",
   "Want visibly refreshed skin and a sense of renewed vitality",
   "Want to deepen a meditation or yoga practice with daily guidance",
-  "Are choosing between programs and want the Wellness Baseline to decide for them, not guesswork",
+  "Are choosing between programs and want the WS to decide for them, not guesswork",
 ]
 
 const FAQ_LINK_LABEL = "See all 23 answers"
@@ -61,6 +74,45 @@ const GALLERY = [
   { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/reception.jpg", caption: "Reception" },
   { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/herbal-drink.jpg", caption: "Herbal cleanse" },
   { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/relax-zone.jpg", caption: "Relax zone" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/guests-warm-welcome.jpg", caption: "A warm welcome" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/guests-foot-soak-trio.jpg", caption: "Foot-soak ritual" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/tanya-oil-jars.jpg", caption: "The Tanya Oil blend" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/facility-signage.jpg", caption: "Tanya Samui campus" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/buddha-courtyard.jpg", caption: "Courtyard shrine" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/bamboo-courtyard-tea.jpg", caption: "Tea in the bamboo courtyard" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/guests-face-mask.jpg", caption: "Herbal face treatments" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/guests-foot-soak-group.jpg", caption: "Group foot-soak ritual" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/wellness-soup-menu.jpg", caption: "The wellness soup menu" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/lounge-interior.jpg", caption: "Lounge" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/group-guests-reunion.jpg", caption: "Guests together" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/sunset-palms.jpg", caption: "Sunset over the palms" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/buddha-lily-pond.jpg", caption: "Lily pond shrine" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/tanya-eatery-buffet.jpg", caption: "Tanya Eatery" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/gallery/fitness-gym.jpg", caption: "Fitness studio" },
+]
+
+const SOCIAL_PROOF = [
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/day2-collage.jpg", handle: "@dreamislands_travel", caption: "Day 2 at Tanya Samui" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/day-pool-cabana.jpg", handle: "@ericahau883", caption: "Poolside at Tanya Samui" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/sound-healing.jpg", handle: "@dreamislands_travel", caption: "Sound bowl healing session" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/day1-collage.jpg", handle: "@dreamislands_travel", caption: "Day 1 at Tanya Samui" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/day4-richandfe.jpg", handle: "@richandfe", caption: "Day 4: Detox at Tanya Samui" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/three-friends.jpg", handle: "@dreamislands_travel", caption: "Tanya Samui" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/day8-richandfe.jpg", handle: "@richandfe", caption: "Day 8 at Tanya Samui" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/facility-tour-richandfe.jpg", handle: "@richandfe", caption: "Facility tour" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/arjanstrainhunter.jpg", handle: "@arjanstrainhunter", caption: "At the entrance" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/erictansq.jpg", handle: "@erictansq", caption: "Group photo" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/tuonglinh-review.jpg", handle: "@tuonglinh.official", caption: "Guest review" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/ericahau883.jpg", handle: "@ericahau883", caption: "Poolside pose" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/vidialdiano-review.jpg", handle: "@vidialdiano", caption: "5-star review" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/vidialdiano-fivestar.jpg", handle: "@vidialdiano", caption: "Courtyard review" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/laurinda-ho-walk.jpg", handle: "@laurinda_ho", caption: "Tanya Samui" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/catrynaaa.jpg", handle: "@catrynaaa_", caption: "Garden path" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/tuonglinh-sunset.jpg", handle: "@tuonglinh.official", caption: "Sunset at the retreat" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/laurinda-ho-oil.jpg", handle: "@laurinda_ho", caption: "The Tanya Oil ritual" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/laurinda-ho-group.jpg", handle: "@laurinda_ho", caption: "Foot-soak with friends" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/laurinda-ho-pool-leaf.jpg", handle: "@laurinda_ho", caption: "Poolside calm" },
+    { url: "https://xbzrtofanbrahasxbisf.supabase.co/storage/v1/object/public/properties/tanya-samui/social-proof/laurinda-ho-fountain.jpg", handle: "@laurinda_ho", caption: "By the fountain" },
 ]
 
 export default async function TanyaSamuiHub() {
@@ -80,7 +132,7 @@ export default async function TanyaSamuiHub() {
     .from("programs")
     .select(
       "id, name, slug, summary, cohort, tier, duration_days, price_usd, outcomes, is_composite, hero_image_url, " +
-        "program_properties(role, properties(id, name, island, country, contact_wa)), " +
+        "program_properties(role, properties(id, name, slug, island, country, contact_wa)), " +
         "program_variants(duration_days, duration_nights, price_basic_usd, price_vip_usd, active)",
     )
     .eq("active", true)
@@ -89,7 +141,7 @@ export default async function TanyaSamuiHub() {
     .not("slug", "like", "mile-%")
     .order("sort_order")
 
-  const programs = ((progRows ?? []) as unknown as DbProgramRow[]).map(mapProgram)
+  const programs = ((progRows ?? []).filter((row: any) => (row.program_properties ?? []).some((pp: any) => ["tanya-core","bunya-clinic","tanya-wellbeing"].includes(pp.properties?.slug))) as unknown as DbProgramRow[]).map(mapProgram)
 
   const { data: reviewRows } = await supabaseAdmin
     .from("reviews")
@@ -113,8 +165,7 @@ export default async function TanyaSamuiHub() {
       {/* HERO */}
       <section style={{ position: "relative", minHeight: "72vh", display: "flex", alignItems: "flex-end", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={HERO_IMG} alt="Tanya Samui" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          <Image src={HERO_IMG} alt="Tanya Samui" fill priority sizes="100vw" style={{ objectFit: "cover" }} />
           <div
             style={{
               position: "absolute",
@@ -173,8 +224,9 @@ export default async function TanyaSamuiHub() {
             return (
               <div key={s.slug} className="card" style={{ overflow: "hidden" }}>
                 {img && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={img} alt={s.name} style={{ width: "100%", aspectRatio: "16 / 10", objectFit: "cover", display: "block" }} />
+                  <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 10" }}>
+                    <Image src={img} alt={s.name} fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: "cover" }} />
+                  </div>
                 )}
                 <div style={{ padding: 24 }}>
                   <div className="eyebrow" style={{ marginBottom: 8 }}>{s.tag}</div>
@@ -200,8 +252,7 @@ export default async function TanyaSamuiHub() {
         <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
           {GALLERY.map((g) => (
             <div key={g.url} style={{ position: "relative", borderRadius: 16, overflow: "hidden", aspectRatio: "4 / 3" }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={g.url} alt={g.caption} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              <Image src={g.url} alt={g.caption} fill sizes="(max-width: 768px) 50vw, 25vw" style={{ objectFit: "cover" }} />
               <div
                 style={{
                   position: "absolute",
@@ -211,6 +262,34 @@ export default async function TanyaSamuiHub() {
               />
               <div style={{ position: "absolute", bottom: 10, left: 12, color: "#fff", fontSize: 13, fontWeight: 600 }}>
                 {g.caption}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* SOCIAL PROOF */}
+      <section className="shell" style={{ paddingTop: 64 }}>
+        <div className="section-head">
+          <div>
+            <div className="eyebrow" style={{ marginBottom: 8 }}>Social proof</div>
+            <h2>As seen <span className="display-italic">on Instagram</span>.</h2>
+          </div>
+        </div>
+        <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
+          {SOCIAL_PROOF.map((s) => (
+            <div key={s.url} style={{ position: "relative", borderRadius: 16, overflow: "hidden", aspectRatio: "4 / 5" }}>
+              <Image src={s.url} alt={s.caption} fill sizes="(max-width: 768px) 50vw, 20vw" style={{ objectFit: "cover" }} />
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,.65) 100%)",
+                }}
+              />
+              <div style={{ position: "absolute", bottom: 10, left: 12, right: 12, color: "#fff" }}>
+                <div style={{ fontSize: 13, fontWeight: 700 }}>{s.handle}</div>
+                <div style={{ fontSize: 11, opacity: 0.85 }}>{s.caption}</div>
               </div>
             </div>
           ))}
@@ -281,10 +360,10 @@ export default async function TanyaSamuiHub() {
         >
           <div className="eyebrow" style={{ color: "rgba(20,32,27,.6)" }}>Not sure which one?</div>
           <p className="display" style={{ fontSize: "clamp(24px, 5vw, 36px)", margin: "12px 0 20px", maxWidth: 560 }}>
-            <span className="display-italic">Free 5-minute check-up</span>, 23 questions, one matched program.
+            <span className="display-italic">Free 2-minute WS</span>, 23 questions, one matched program.
           </p>
           <Link href="/start" className="btn" style={{ background: "var(--accent-ink)", color: "var(--accent)" }}>
-            Take the Wellness Baseline <Icon.arrow width={16} height={16} />
+            Get your WS <Icon.arrow width={16} height={16} />
           </Link>
         </div>
       </section>
@@ -299,7 +378,7 @@ export default async function TanyaSamuiHub() {
         </div>
         <p className="body" style={{ maxWidth: 720, marginBottom: 28 }}>
           <strong>Before</strong> your trip, a five-to-seven-minute check-in captures sleep, energy, stress,
-          movement and recovery to set your personal Wellness Baseline. <strong>During</strong> your stay, brief
+          movement and recovery to set your personal WS. <strong>During</strong> your stay, brief
           daily check-ins let the team gently adjust protocol intensity to how your body is actually responding.{" "}
           <strong>After</strong> you return, your score is recalculated so the change is visible, not assumed —
           backed by blood work and ultrasound from Bunya Clinic where relevant.

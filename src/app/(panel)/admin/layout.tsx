@@ -1,6 +1,7 @@
 import {
   AppstoreOutlined,
   CalendarOutlined,
+  DollarOutlined,
   EnvironmentOutlined,
   HomeOutlined,
   HomeFilled,
@@ -14,6 +15,12 @@ import { getSessionUser } from "@/lib/auth"
 const navItems: NavItem[] = [
   { key: "/admin", href: "/admin", icon: <HomeOutlined />, label: "Overview" },
   {
+    key: "/admin/team",
+    href: "/admin/team",
+    icon: <TeamOutlined />,
+    label: "Team",
+  },
+  {
     key: "/admin/properties",
     href: "/admin/properties",
     icon: <EnvironmentOutlined />,
@@ -24,6 +31,12 @@ const navItems: NavItem[] = [
     href: "/admin/programs",
     icon: <AppstoreOutlined />,
     label: "Programs",
+  },
+  {
+    key: "/admin/pricing-gaps",
+    href: "/admin/pricing-gaps",
+    icon: <DollarOutlined />,
+    label: "Pricing gaps",
   },
   {
     key: "/admin/services",
@@ -42,12 +55,6 @@ const navItems: NavItem[] = [
     href: "/admin/users",
     icon: <UserOutlined />,
     label: "Guests",
-  },
-  {
-    key: "/admin/team",
-    href: "/admin/team",
-    icon: <TeamOutlined />,
-    label: "Team",
   },
   {
     key: "/admin/bookings",

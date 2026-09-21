@@ -29,11 +29,15 @@ export async function POST(req: Request) {
   const name = (body.name ?? "").trim()
   if (!name) return bad("name required")
 
-  // Partner can only insert specialists on their own property
+  // Partner can only insert specialists on a property they are linked to.
+  // With a single linked property the pick is implicit, as it was before.
   let propertyId = body.property_id ?? null
   if (me.role === "partner") {
-    if (!me.partner_property_id) return bad("partner has no linked property", 403)
-    propertyId = me.partner_property_id
+    const own = me.partner_property_ids
+    if (own.length === 0) return bad("partner has no linked property", 403)
+    if (!propertyId && own.length === 1) propertyId = own[0]
+    if (!propertyId) return bad("property_id required")
+    if (!own.includes(propertyId)) return bad("property not in your scope", 403)
   } else {
     if (!propertyId) return bad("property_id required")
   }

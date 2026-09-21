@@ -14,7 +14,7 @@ async function authzForBookingAndSpec(
   me: NonNullable<Awaited<ReturnType<typeof getSessionUser>>>,
 ) {
   if (me.role === "admin") return { ok: true as const }
-  if (me.role !== "partner" || !me.partner_property_id) {
+  if (me.role !== "partner" || me.partner_property_ids.length === 0) {
     return { error: bad("forbidden", 403) }
   }
 
@@ -23,7 +23,7 @@ async function authzForBookingAndSpec(
     .select("property_id")
     .eq("id", specialistId)
     .maybeSingle()
-  if (!specialist || specialist.property_id !== me.partner_property_id) {
+  if (!specialist || !me.partner_property_ids.includes(specialist.property_id)) {
     return { error: bad("specialist not in your property", 403) }
   }
 
@@ -37,7 +37,7 @@ async function authzForBookingAndSpec(
   const links = (booking as unknown as {
     programs: { program_properties: Array<{ property_id: string }> } | null
   }).programs?.program_properties ?? []
-  const matchesScope = links.some((pp) => pp.property_id === me.partner_property_id)
+  const matchesScope = links.some((pp) => me.partner_property_ids.includes(pp.property_id))
   if (!matchesScope) return { error: bad("booking not on your property", 403) }
   return { ok: true as const }
 }

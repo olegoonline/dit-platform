@@ -30,6 +30,15 @@ export async function GET(req: Request) {
 
   if (propertyId) q = q.eq("property_id", propertyId)
   if (me?.role !== "admin") q = q.eq("active", true)
+  // This route uses the service-role client, which bypasses RLS — so the partner
+  // scope has to be applied here explicitly or a partner could read a competitor's
+  // rates by guessing a property_id.
+  if (me?.role === "partner") {
+    if (me.partner_property_ids.length === 0) {
+      return NextResponse.json({ success: true, accommodations: [] })
+    }
+    q = q.in("property_id", me.partner_property_ids)
+  }
 
   const { data, error } = await q
   if (error) return bad(error.message)

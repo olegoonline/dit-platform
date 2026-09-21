@@ -88,12 +88,12 @@ export default function PartnerOverviewView({
     <Space direction="vertical" size={24} style={{ width: "100%" }}>
       <div>
         <Title level={3} style={{ margin: 0, fontWeight: 600 }}>
-          Programs at your property
+          Programs at your properties
         </Title>
         <Text type="secondary">
           {propertyLabel
             ? `Outcomes scoped to ${propertyLabel}`
-            : "No property linked — ask an admin to set partner_property_id"}
+            : "No property linked — ask an admin to link your account to a property"}
         </Text>
       </div>
 
@@ -102,7 +102,7 @@ export default function PartnerOverviewView({
           type="warning"
           showIcon
           message="No property linked"
-          description="Until partner_property_id is set on your profile, this view will be empty."
+          description="Until an admin links a property to your account, this view will be empty."
         />
       )}
 

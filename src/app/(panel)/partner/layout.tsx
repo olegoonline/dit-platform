@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 import {
   AppstoreOutlined,
+  EnvironmentOutlined,
   TeamOutlined,
   UserOutlined,
 } from "@ant-design/icons"
@@ -13,6 +14,12 @@ const navItems: NavItem[] = [
     href: "/partner",
     icon: <AppstoreOutlined />,
     label: "Programs",
+  },
+  {
+    key: "/partner/properties",
+    href: "/partner/properties",
+    icon: <EnvironmentOutlined />,
+    label: "Properties",
   },
   {
     key: "/partner/guests",

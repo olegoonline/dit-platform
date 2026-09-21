@@ -11,6 +11,7 @@ import {
   type WbsResult,
 } from "@/lib/wbs"
 import { Icon } from "../_components/Icon"
+import { track } from "../_lib/track"
 
 const ALL_QUESTIONS = WBS_QUESTIONS.filter(
   (q): q is Extract<WbsQuestion, { type: "choice" }> | Extract<WbsQuestion, { type: "height_weight" }> =>
@@ -59,6 +60,10 @@ export default function AssessmentView() {
   function pickHeightWeight(heightCm: number | null, weightKg: number | null) {
     advance({ ...answers, height_cm: heightCm, weight_kg: weightKg })
   }
+
+  useEffect(() => {
+    track("wbs_start")
+  }, [])
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -115,6 +120,7 @@ export default function AssessmentView() {
       }
       setScore(result)
       setPhase("done")
+      track("wbs_complete", { wbs_score: result.total, cohort: result.cohort })
       setTimeout(() => router.push(`/matched/${json.user.id}`), 2200)
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Network error")
@@ -125,11 +131,11 @@ export default function AssessmentView() {
   const renderedSections = new Set<string>()
 
   return (
-    <div className="page" style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
+    <div className="page" style={{ minHeight: "100svh", display: "flex", flexDirection: "column" }}>
       <div className="shell" style={{ paddingTop: 16, paddingBottom: 14 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div style={{ flex: 1 }}>
-            <div className="eyebrow" style={{ marginBottom: 6 }}>Wellness Baseline</div>
+            <div className="eyebrow" style={{ marginBottom: 6 }}>Wellbeing &amp; Wellness Score (WS)</div>
             <div
               style={{
                 height: 6,
@@ -164,7 +170,7 @@ export default function AssessmentView() {
         style={{
           flex: 1,
           overflowY: "auto",
-          padding: "0 var(--pad) 32px",
+          padding: "0 var(--pad) 120px",
           maxWidth: 560,
           width: "100%",
           margin: "0 auto",
@@ -175,7 +181,7 @@ export default function AssessmentView() {
             Hello, <span className="display-italic" style={{ color: "var(--accent)" }}>friend</span>.
           </h1>
           <p className="body" style={{ margin: "8px 0 0" }}>
-            Let&apos;s find your wellbeing baseline. {total} questions · 5 minutes.
+            Let&apos;s find your WS. {total} questions · 2 minutes.
           </p>
         </div>
 
@@ -289,10 +295,11 @@ export default function AssessmentView() {
                   <div className="eyebrow" style={{ marginBottom: 6 }}>Your name</div>
                   <input
                     className="field"
-                    autoFocus
                     placeholder="Alex Carter"
+                    autoComplete="name"
                     value={contact.name}
                     onChange={(e) => setContact({ ...contact, name: e.target.value })}
+                    onFocus={(e) => e.currentTarget.scrollIntoView({ block: "center", behavior: "smooth" })}
                   />
                 </label>
                 <label style={{ display: "block" }}>
@@ -301,10 +308,14 @@ export default function AssessmentView() {
                   </div>
                   <input
                     className="field"
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
                     placeholder="+65 9123 4567"
                     value={contact.whatsapp}
                     required
                     onChange={(e) => setContact({ ...contact, whatsapp: e.target.value })}
+                    onFocus={(e) => e.currentTarget.scrollIntoView({ block: "center", behavior: "smooth" })}
                   />
                 </label>
                 <label style={{ display: "block" }}>
@@ -312,9 +323,12 @@ export default function AssessmentView() {
                   <input
                     className="field"
                     type="email"
+                    inputMode="email"
+                    autoComplete="email"
                     placeholder="alex@example.com"
                     value={contact.email}
                     onChange={(e) => setContact({ ...contact, email: e.target.value })}
+                    onFocus={(e) => e.currentTarget.scrollIntoView({ block: "center", behavior: "smooth" })}
                   />
                 </label>
                 <label style={{ display: "block" }}>
@@ -322,8 +336,10 @@ export default function AssessmentView() {
                   <input
                     className="field"
                     placeholder="Singapore"
+                    autoComplete="country-name"
                     value={contact.country}
                     onChange={(e) => setContact({ ...contact, country: e.target.value })}
+                    onFocus={(e) => e.currentTarget.scrollIntoView({ block: "center", behavior: "smooth" })}
                   />
                 </label>
                 {submitError && (

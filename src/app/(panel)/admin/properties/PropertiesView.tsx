@@ -1,6 +1,11 @@
 "use client"
 
-import { EditOutlined, PlusOutlined, SafetyCertificateOutlined } from "@ant-design/icons"
+import {
+  ArrowRightOutlined,
+  EditOutlined,
+  PlusOutlined,
+  SafetyCertificateOutlined,
+} from "@ant-design/icons"
 import {
   Alert,
   App,
@@ -8,22 +13,20 @@ import {
   Card,
   Empty,
   Form,
-  Input,
   Modal,
   Row,
-  Select,
   Space,
-  Switch,
   Table,
   Tag,
   Typography,
 } from "antd"
 import type { ColumnsType } from "antd/es/table"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import PropertyFormFields, { type PropertyFormValues } from "./PropertyFormFields"
 
 const { Text, Title } = Typography
-const { TextArea } = Input
 
 export type PropertyRow = {
   id: string
@@ -41,25 +44,7 @@ export type PropertyRow = {
   created_at: string
 }
 
-type FormValues = {
-  name: string
-  slug: string
-  parent_id?: string | null
-  island?: string
-  country?: string
-  cohort_tags?: number[]
-  certified?: boolean
-  active?: boolean
-  contact_wa?: string
-  description?: string
-}
-
-const cohortOptions = [
-  { value: 1, label: "1 · Reset" },
-  { value: 2, label: "2 · Performance" },
-  { value: 3, label: "3 · Mind" },
-  { value: 4, label: "4 · Immersion" },
-]
+type FormValues = PropertyFormValues
 
 export default function PropertiesView({
   rows,
@@ -134,7 +119,9 @@ export default function PropertiesView({
       key: "name",
       render: (_v, p) => (
         <div>
-          <Text strong>{p.name}</Text>
+          <Link href={`/admin/properties/${p.id}`}>
+            <Text strong>{p.name}</Text>
+          </Link>
           {p.parent_name && (
             <div>
               <Text type="secondary" style={{ fontSize: 12 }}>
@@ -182,7 +169,7 @@ export default function PropertiesView({
           {p.active ? <Tag color="green">active</Tag> : <Tag>inactive</Tag>}
           {p.certified && (
             <Tag color="blue" icon={<SafetyCertificateOutlined />}>
-              certified
+              verified
             </Tag>
           )}
         </Space>
@@ -191,11 +178,18 @@ export default function PropertiesView({
     {
       title: "Actions",
       key: "actions",
-      width: 100,
+      width: 170,
       render: (_v, p) => (
-        <Button size="small" icon={<EditOutlined />} onClick={() => openEdit(p)}>
-          Edit
-        </Button>
+        <Space size={4}>
+          <Button size="small" icon={<EditOutlined />} onClick={() => openEdit(p)}>
+            Edit
+          </Button>
+          <Link href={`/admin/properties/${p.id}`}>
+            <Button size="small" icon={<ArrowRightOutlined />}>
+              Open
+            </Button>
+          </Link>
+        </Space>
       ),
     },
   ]
@@ -236,53 +230,7 @@ export default function PropertiesView({
         destroyOnHidden
       >
         <Form<FormValues> form={form} layout="vertical" onFinish={onSubmit}>
-          <Form.Item name="name" label="Name" rules={[{ required: true, message: "Name required" }]}>
-            <Input autoComplete="off" placeholder="Tanya Samui — Core" />
-          </Form.Item>
-          <Form.Item
-            name="slug"
-            label="Slug"
-            rules={[
-              { required: true, message: "Slug required" },
-              { pattern: /^[a-z0-9-]+$/, message: "Lowercase letters, digits, hyphens" },
-            ]}
-          >
-            <Input autoComplete="off" placeholder="tanya-core" />
-          </Form.Item>
-          <Form.Item name="parent_id" label="Parent property (optional)">
-            <Select
-              allowClear
-              placeholder="No parent (top-level)"
-              options={parentOptions
-                .filter((p) => p.id !== editing?.id)
-                .map((p) => ({ value: p.id, label: p.name }))}
-            />
-          </Form.Item>
-          <Row gutter={12}>
-            <Form.Item name="island" label="Island" style={{ flex: 1, marginRight: 12 }}>
-              <Input autoComplete="off" />
-            </Form.Item>
-            <Form.Item name="country" label="Country" style={{ flex: 1 }}>
-              <Input autoComplete="off" />
-            </Form.Item>
-          </Row>
-          <Form.Item name="cohort_tags" label="Cohort focus">
-            <Select mode="multiple" options={cohortOptions} placeholder="Pick cohorts" />
-          </Form.Item>
-          <Row gutter={12}>
-            <Form.Item name="certified" label="Certified" valuePropName="checked" style={{ marginRight: 24 }}>
-              <Switch />
-            </Form.Item>
-            <Form.Item name="active" label="Active" valuePropName="checked">
-              <Switch />
-            </Form.Item>
-          </Row>
-          <Form.Item name="contact_wa" label="WhatsApp number (with country code)">
-            <Input autoComplete="off" placeholder="+66800000000" />
-          </Form.Item>
-          <Form.Item name="description" label="Description">
-            <TextArea rows={3} />
-          </Form.Item>
+          <PropertyFormFields parentOptions={parentOptions} excludeParentId={editing?.id} />
         </Form>
       </Modal>
     </Space>

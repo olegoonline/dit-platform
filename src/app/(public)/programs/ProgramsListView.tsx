@@ -2,11 +2,12 @@
 
 import { useMemo, useState } from "react"
 import { TRACKS, type LandingProgram } from "../_lib/programMapping"
+import { COUNTRIES, COUNTRY_FLAGS, countryFromSlug } from "../_lib/countries"
 import ProgramCard from "../_components/ProgramCard"
 import { Icon } from "../_components/Icon"
 
-type Filter = "All" | "Reset" | "Performance" | "Mind" | "Immersion"
-const FILTERS: Filter[] = ["All", "Reset", "Performance", "Mind", "Immersion"]
+type Filter = "All" | "Reset" | "Performance" | "Mind" | "Immersion" | "SportChill"
+const FILTERS: Filter[] = ["All", "Reset", "Performance", "Mind", "Immersion", "SportChill"]
 
 function isFilter(s: string): s is Filter {
   return (FILTERS as string[]).includes(s)
@@ -15,21 +16,39 @@ function isFilter(s: string): s is Filter {
 export default function ProgramsListView({
   programs,
   initialFilter,
+  initialCountry,
 }: {
   programs: LandingProgram[]
   initialFilter: string
+  initialCountry?: string
 }) {
   const [filter, setFilter] = useState<Filter>(isFilter(initialFilter) ? initialFilter : "All")
 
+  const resolvedInitialCountry =
+    initialCountry && initialCountry !== "All" ? countryFromSlug(initialCountry) ?? "All" : "All"
+  const [country, setCountry] = useState<string>(resolvedInitialCountry)
+
   const grouped = useMemo(
     () =>
-      TRACKS.map((t) => ({ ...t, items: programs.filter((p) => p.track === t.id) })).filter(
-        (g) => g.items.length,
-      ),
+      TRACKS.map((t) => {
+        const items = programs.filter((p) => p.track === t.id)
+        if (t.id === "Performance") {
+          items.sort((a, b) => {
+            const aFirst = a.performanceSubtype?.code === "sport_chill" ? 0 : 1
+            const bFirst = b.performanceSubtype?.code === "sport_chill" ? 0 : 1
+            return aFirst - bFirst
+          })
+        }
+        return { ...t, items }
+      }).filter((g) => g.items.length),
     [programs],
   )
 
-  const shown = filter === "All" ? programs : programs.filter((p) => p.track === filter)
+  const matchesFilters = (p: LandingProgram) =>
+    (filter === "All" || p.track === filter) && (country === "All" || p.country === country)
+
+  const shown = programs.filter(matchesFilters)
+  const showGrouped = filter === "All" && country === "All"
 
   return (
     <div className="page" style={{ paddingBottom: 120 }}>
@@ -42,12 +61,12 @@ export default function ProgramsListView({
           Best <span className="display-italic">trips</span> for you.
         </h1>
         <p className="body-lg" style={{ marginBottom: 28, maxWidth: 640 }}>
-          Every program here is matched to a goal, not a place — detox, performance, calm or
-          longevity — and tracked from baseline to outcome, not just booked and forgotten.
+          Every program here is matched to a goal, not a place - detox, performance, calm or
+          longevity - and tracked from baseline to outcome, not just booked and forgotten.
         </p>
 
         <div
-          style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 8, marginBottom: 12 }}
+          style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 8, marginBottom: 10 }}
         >
           {FILTERS.map((f) => (
             <button
@@ -61,7 +80,7 @@ export default function ProgramsListView({
                 fontSize: 13,
                 background: filter === f ? "var(--accent)" : "var(--surface-2)",
                 color: filter === f ? "var(--accent-ink)" : "var(--ink-2)",
-                border: `1px solid ${filter === f ? "var(--accent)" : "var(--line)"}`,
+                border: "1px solid " + (filter === f ? "var(--accent)" : "var(--line)"),
               }}
             >
               {f}
@@ -69,7 +88,30 @@ export default function ProgramsListView({
           ))}
         </div>
 
-        {filter === "All" ? (
+        <div
+          style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 8, marginBottom: 12 }}
+        >
+          {["All", ...COUNTRIES].map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setCountry(c)}
+              className="tag"
+              style={{
+                flex: "0 0 auto",
+                padding: "10px 16px",
+                fontSize: 13,
+                background: country === c ? "var(--accent)" : "var(--surface-2)",
+                color: country === c ? "var(--accent-ink)" : "var(--ink-2)",
+                border: "1px solid " + (country === c ? "var(--accent)" : "var(--line)"),
+              }}
+            >
+              {c === "All" ? "All countries" : (COUNTRY_FLAGS[c] ?? "") + " " + c}
+            </button>
+          ))}
+        </div>
+
+        {showGrouped ? (
           grouped.length === 0 ? (
             <EmptyState />
           ) : (
@@ -121,7 +163,7 @@ export default function ProgramsListView({
             ))
           )
         ) : shown.length === 0 ? (
-          <EmptyState filter={filter} />
+          <EmptyState filter={filter} country={country} />
         ) : (
           <div
             style={{ display: "grid", gap: 16, marginTop: 16 }}
@@ -133,25 +175,22 @@ export default function ProgramsListView({
           </div>
         )}
 
-        <style>{`
-          @media (min-width: 700px) {
-            .programs-grid { grid-template-columns: repeat(2, 1fr); }
-          }
-          @media (min-width: 1100px) {
-            .programs-grid { grid-template-columns: repeat(3, 1fr); }
-          }
-        `}</style>
+        <style>{"@media (min-width: 700px) { .programs-grid { grid-template-columns: repeat(2, 1fr); } } @media (min-width: 1100px) { .programs-grid { grid-template-columns: repeat(3, 1fr); } }"}</style>
       </section>
     </div>
   )
 }
 
-function EmptyState({ filter }: { filter?: Filter }) {
+function EmptyState({ filter, country }: { filter?: Filter; country?: string }) {
+  const parts: string[] = []
+  if (filter && filter !== "All") parts.push(filter)
+  if (country && country !== "All") parts.push(country)
+  const label = parts.length ? parts.join(" · ") : ""
   return (
     <div className="card" style={{ padding: 32, marginTop: 24, textAlign: "center" }}>
       <div className="body">
-        {filter
-          ? `No ${filter} programs published yet.`
+        {label
+          ? "No " + label + " programs published yet."
           : "No programs published yet. Check back soon."}
       </div>
     </div>

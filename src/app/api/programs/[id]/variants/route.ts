@@ -8,12 +8,21 @@ type CreateVariantPayload = {
   duration_nights?: number
   price_basic_usd?: number
   price_vip_usd?: number | null
+  price_basic_thb?: number | null
+  price_vip_thb?: number | null
   active?: boolean
   sort_order?: number
 }
 
 function bad(message: string, status = 400) {
   return NextResponse.json({ success: false, error: message }, { status })
+}
+
+// Positive-number-or-null validator for THB fields. Empty must be stored as
+// null (never 0), and we never auto-convert or infer THB from USD.
+function validThbOrNull(v: number | null | undefined): v is number | null {
+  if (v === null || v === undefined) return true
+  return typeof v === "number" && v > 0
 }
 
 export async function GET(
@@ -49,6 +58,8 @@ export async function POST(
   if (!body.duration_days || body.duration_days < 1) return bad("duration_days >= 1")
   if (!body.duration_nights || body.duration_nights < 0) return bad("duration_nights >= 0")
   if (body.price_basic_usd == null || body.price_basic_usd < 0) return bad("price_basic_usd required")
+  if (!validThbOrNull(body.price_basic_thb)) return bad("price_basic_thb must be a positive number, or omitted/null")
+  if (!validThbOrNull(body.price_vip_thb)) return bad("price_vip_thb must be a positive number, or omitted/null")
 
   const insert = {
     program_id: id,
@@ -57,6 +68,8 @@ export async function POST(
     duration_nights: body.duration_nights,
     price_basic_usd: body.price_basic_usd,
     price_vip_usd: body.price_vip_usd ?? null,
+    price_basic_thb: body.price_basic_thb ?? null,
+    price_vip_thb: body.price_vip_thb ?? null,
     active: body.active ?? true,
     sort_order: body.sort_order ?? 100,
   }

@@ -54,10 +54,10 @@ export type MeBooking = {
 }
 
 const COHORT_LABELS: Record<number, string> = {
-  1: "Reset",
+  1: "Reset & Recovery",
   2: "Performance",
-  3: "Mind",
-  4: "Immersion",
+  3: "Mind Balance",
+  4: "Island Immersion",
 }
 const STATUS_COLOR: Record<string, string> = {
   inquiry: "default",

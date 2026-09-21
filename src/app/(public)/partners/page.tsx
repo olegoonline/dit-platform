@@ -1,5 +1,17 @@
 import Link from "next/link"
+import type { Metadata } from "next"
 import { Icon } from "../_components/Icon"
+
+export const metadata: Metadata = {
+  title: "Partnership / B2B / MICE",
+  description: "Partner with Dream Islands — wellness property onboarding, B2B distribution, and MICE wellness programs across Asia.",
+  alternates: { canonical: "/partners" },
+  openGraph: {
+    title: "Partnership / B2B / MICE | Dream Islands",
+    description: "Wellness property onboarding, B2B distribution, and MICE wellness programs across Asia.",
+    url: "https://dreamislands.org/partners",
+  },
+}
 
 export const dynamic = "force-dynamic"
 
@@ -21,7 +33,7 @@ const OFFERINGS: Array<[string, string]> = [
 const WHY_PARTNER: Array<[string, string]> = [
   ["Less OTA dependency", "Guests come to you already matched by goal, not by who bid highest on an ad."],
   ["Real differentiation", "A standardized program framework instead of \"spa + yoga\" that looks the same everywhere."],
-  ["Pre-qualified demand", "Every referral has already completed a Wellness Baseline — no cold walk-ins."],
+  ["Pre-qualified demand", "Every referral has already completed a Wellbeing & Wellness Score (WS) — no cold walk-ins."],
   ["Outcome data", "We track what guests actually experience, so you learn which programs perform and which don't."],
 ]
 
@@ -39,7 +51,7 @@ export default function PartnersPage() {
         </h1>
         <p className="body-lg" style={{ marginBottom: 44, maxWidth: 720 }}>
           Dream Islands works directly with wellness properties, activity providers, and corporate
-          travel buyers across Southeast Asia — standardizing programs, matching pre-qualified
+          travel buyers across Asia — standardizing programs, matching pre-qualified
           guests to the right offering, and tracking outcomes over time.
         </p>
 
@@ -99,6 +111,9 @@ export default function PartnersPage() {
         </div>
 
         <div style={{ marginTop: 32 }}>
+        <div style={{ marginBottom: 16 }}>
+          <p className="body-sm">Running a wellness property instead? <a href="/for-properties" style={{ color: "var(--accent)" }}>Explore the platform</a>.</p>
+        </div>
           <Link href="/about" className="btn btn-ghost" style={{ padding: "10px 16px", fontSize: 13 }}>
             {"←"} About Dream Islands
           </Link>

@@ -42,7 +42,7 @@ export default async function PartnerGuests({
 }) {
   const filters = await searchParams
   const me = await getSessionUser()
-  const partnerPropId = me?.partner_property_id ?? null
+  const partnerPropIds = me?.partner_property_ids ?? []
   const sb = await supabaseServer()
 
   const [guestsRes, bookingsRes, programsRes, ppRes, propsRes] = await Promise.all([
@@ -150,12 +150,12 @@ export default async function PartnerGuests({
     return true
   })
 
-  // Scope program + property options to the partner's property only.
+  // Scope program + property options to the partner's own properties.
   // Properties RLS allows partner to see all active properties (they're not PII),
   // but the filter UI must reflect only what the partner actually owns.
   const partnerProgramIds = new Set<string>()
   for (const link of (ppRes.data ?? []) as DbProgramProperty[]) {
-    if (partnerPropId && link.property_id === partnerPropId) partnerProgramIds.add(link.program_id)
+    if (partnerPropIds.includes(link.property_id)) partnerProgramIds.add(link.program_id)
   }
   const programOptions: ProgramOption[] = ((programsRes.data ?? []) as DbProgram[])
     .filter((p) => partnerProgramIds.has(p.id))
@@ -166,7 +166,7 @@ export default async function PartnerGuests({
       tier: p.tier,
     }))
   const propertyOptions: PropertyOption[] = ((propsRes.data ?? []) as DbProperty[])
-    .filter((p) => p.id === partnerPropId)
+    .filter((p) => partnerPropIds.includes(p.id))
     .map((p) => ({
       id: p.id,
       name: p.name,

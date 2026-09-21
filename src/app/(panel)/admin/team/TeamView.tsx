@@ -39,9 +39,7 @@ export type TeamMember = {
   id: string
   email: string
   role: "admin" | "partner" | "user"
-  partner_property_id: string | null
-  partner_property_name: string | null
-  partner_property_slug: string | null
+  partner_properties: Array<{ id: string; name: string; slug: string }>
   full_name: string | null
   password_set_by_admin: boolean
   created_at: string
@@ -101,7 +99,7 @@ export default function TeamView({
   async function onInvite(values: {
     email: string
     role: TeamMember["role"]
-    partner_property_id?: string
+    partner_property_ids?: string[]
     full_name?: string
   }) {
     setBusy(true)
@@ -112,7 +110,7 @@ export default function TeamView({
         body: JSON.stringify({
           email: values.email,
           role: values.role,
-          partner_property_id: values.partner_property_id ?? null,
+          partner_property_ids: values.partner_property_ids ?? [],
           full_name: values.full_name ?? null,
         }),
       })
@@ -131,7 +129,7 @@ export default function TeamView({
 
   async function onEdit(values: {
     role: TeamMember["role"]
-    partner_property_id?: string
+    partner_property_ids?: string[]
     full_name?: string
   }) {
     if (!editTarget) return
@@ -142,8 +140,8 @@ export default function TeamView({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           role: values.role,
-          partner_property_id:
-            values.role === "partner" ? values.partner_property_id ?? null : null,
+          partner_property_ids:
+            values.role === "partner" ? values.partner_property_ids ?? [] : [],
           full_name: values.full_name ?? null,
         }),
       })
@@ -228,18 +226,20 @@ export default function TeamView({
       ),
     },
     {
-      title: "Linked property",
+      title: "Linked properties",
       key: "property",
       render: (_v, r) =>
         r.role === "partner" ? (
-          r.partner_property_name ? (
-            <Space size={4}>
-              <Text>{r.partner_property_name}</Text>
-              {r.partner_property_slug && (
-                <Text type="secondary" style={{ fontSize: 11 }}>
-                  ({r.partner_property_slug})
-                </Text>
-              )}
+          r.partner_properties.length > 0 ? (
+            <Space size={4} wrap>
+              {r.partner_properties.map((p) => (
+                <Tag
+                  key={p.id}
+                  style={{ background: "#E1F5EE", color: "#0F6E56", borderColor: "#B9E4D6" }}
+                >
+                  {p.name}
+                </Tag>
+              ))}
             </Space>
           ) : (
             <Tag color="red">missing</Tag>
@@ -395,7 +395,7 @@ function InviteModal({
   onSubmit: (v: {
     email: string
     role: TeamMember["role"]
-    partner_property_id?: string
+    partner_property_ids?: string[]
     full_name?: string
   }) => void
 }) {
@@ -442,13 +442,14 @@ function InviteModal({
         </Form.Item>
         {role === "partner" && (
           <Form.Item
-            name="partner_property_id"
-            label="Linked property"
-            rules={[{ required: true, message: "Pick a property for the partner" }]}
+            name="partner_property_ids"
+            label="Linked properties"
+            rules={[{ required: true, message: "Pick at least one property for the partner" }]}
           >
             <Select
+              mode="multiple"
               options={propertyOptions}
-              placeholder="Select property"
+              placeholder="Select properties"
               showSearch
               optionFilterProp="label"
             />
@@ -479,7 +480,7 @@ function EditModal({
   onCancel: () => void
   onSubmit: (v: {
     role: TeamMember["role"]
-    partner_property_id?: string
+    partner_property_ids?: string[]
     full_name?: string
   }) => void
 }) {
@@ -504,7 +505,7 @@ function EditModal({
           layout="vertical"
           initialValues={{
             role: target.role,
-            partner_property_id: target.partner_property_id ?? undefined,
+            partner_property_ids: target.partner_properties.map((p) => p.id),
             full_name: target.full_name ?? undefined,
           }}
           onFinish={onSubmit}
@@ -532,13 +533,14 @@ function EditModal({
           )}
           {role === "partner" && (
             <Form.Item
-              name="partner_property_id"
-              label="Linked property"
-              rules={[{ required: true, message: "Partner must have a property" }]}
+              name="partner_property_ids"
+              label="Linked properties"
+              rules={[{ required: true, message: "Partner must have at least one property" }]}
             >
               <Select
+                mode="multiple"
                 options={propertyOptions}
-                placeholder="Select property"
+                placeholder="Select properties"
                 showSearch
                 optionFilterProp="label"
               />

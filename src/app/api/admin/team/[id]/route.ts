@@ -4,7 +4,7 @@ import { getSessionUser } from "@/lib/auth"
 
 type UpdatePayload = {
   role?: "admin" | "partner" | "user"
-  partner_property_id?: string | null
+  partner_property_ids?: string[]
   full_name?: string | null
 }
 
@@ -33,11 +33,17 @@ export async function PATCH(
     return bad("you cannot change your own role")
   }
 
-  const { data: target, error: fetchErr } = await supabaseAdmin
-    .from("profiles")
-    .select("id, role, partner_property_id, full_name")
-    .eq("id", id)
-    .single()
+  const [{ data: target, error: fetchErr }, { data: currentLinks }] = await Promise.all([
+    supabaseAdmin
+      .from("profiles")
+      .select("id, role, full_name")
+      .eq("id", id)
+      .single(),
+    supabaseAdmin
+      .from("partner_properties")
+      .select("property_id")
+      .eq("profile_id", id),
+  ])
   if (fetchErr || !target) return bad("user not found", 404)
 
   const nextRole = body.role ?? target.role
@@ -55,18 +61,20 @@ export async function PATCH(
     }
   }
 
-  const nextPropertyId =
+  const existingIds = (currentLinks ?? []).map((l) => l.property_id as string)
+  const nextPropertyIds =
     nextRole === "partner"
-      ? body.partner_property_id ?? target.partner_property_id
-      : null
+      ? Array.from(new Set(body.partner_property_ids ?? existingIds))
+      : []
 
-  if (nextRole === "partner" && !nextPropertyId) {
-    return bad("partner_property_id required when role=partner")
+  if (nextRole === "partner" && nextPropertyIds.length === 0) {
+    return bad("partner_property_ids required when role=partner")
   }
 
   const update: Record<string, unknown> = {
     role: nextRole,
-    partner_property_id: nextPropertyId,
+    // Dual-write: RLS still scopes off this column until migration 18 lands.
+    partner_property_id: nextPropertyIds[0] ?? null,
   }
   if (body.full_name !== undefined) {
     update.full_name = body.full_name?.trim() || null
@@ -78,6 +86,20 @@ export async function PATCH(
     .eq("id", id)
 
   if (updateErr) return bad(`update failed: ${updateErr.message}`)
+
+  // Replace the link set rather than merging — removing a property must remove access.
+  const { error: delErr } = await supabaseAdmin
+    .from("partner_properties")
+    .delete()
+    .eq("profile_id", id)
+  if (delErr) return bad(`property unlink failed: ${delErr.message}`)
+
+  if (nextPropertyIds.length > 0) {
+    const { error: insErr } = await supabaseAdmin
+      .from("partner_properties")
+      .insert(nextPropertyIds.map((pid) => ({ profile_id: id, property_id: pid })))
+    if (insErr) return bad(`property link failed: ${insErr.message}`)
+  }
 
   return NextResponse.json({ success: true })
 }

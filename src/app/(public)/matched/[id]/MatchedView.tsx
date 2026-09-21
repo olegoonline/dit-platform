@@ -1,4 +1,5 @@
 "use client"
+import Image from "next/image"
 
 import Link from "next/link"
 import { useState } from "react"
@@ -109,6 +110,10 @@ export default function MatchedView({
       })
       const json = await res.json()
       if (!res.ok || !json.success) { setSubmitError(json.error ?? "Could not save inquiry"); return }
+      if (json.checkout_url) {
+        window.location.href = json.checkout_url
+        return
+      }
       setReservedIds((s) => new Set(s).add(reserveTarget.id))
       setSubmitOk(`Inquiry sent for ${reserveTarget.name}. We'll WhatsApp you within a few minutes.`)
       setReserveTarget(null)
@@ -120,7 +125,7 @@ export default function MatchedView({
   return (
     <div className="page" style={{ paddingBottom: 80 }}>
       <section className="shell" style={{ paddingTop: 24 }}>
-        <div className="eyebrow" style={{ marginBottom: 10 }}>Your wellness baseline</div>
+        <div className="eyebrow" style={{ marginBottom: 10 }}>Your WS</div>
         <h1
           className="display"
           style={{ margin: 0, fontSize: "clamp(40px, 10vw, 72px)", color: "var(--ink)" }}
@@ -170,7 +175,7 @@ export default function MatchedView({
             </div>
             {cohortLabel && (
               <span className="tag" style={{ background: cohortLabel.color, color: "white" }}>
-                {cohortLabel.name} · {cohortLabel.tagline}
+                {cohortLabel.fullName} · {cohortLabel.tagline}
               </span>
             )}
           </div>
@@ -349,8 +354,12 @@ export default function MatchedView({
                 </div>
               )}
               <button type="submit" className="btn btn-primary btn-block btn-lg" disabled={submitting}>
-                {submitting ? "Sending…" : "Send inquiry"}
+                {submitting ? "Redirecting…" : "Continue to secure payment"}
               </button>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, fontSize: 12, color: "var(--ink-3)" }}>
+                20% deposit, secured by
+                <Image src="/stripe-logo.png" alt="Stripe" width={53} height={14} style={{ height: 14, width: "auto" }} />
+              </div>
               <button type="button" className="btn btn-ghost btn-block" onClick={closeReserve}>Cancel</button>
             </form>
           </div>
@@ -411,7 +420,7 @@ function MatchedCard({
   const greeting = name ? `Hi! I'm ${name}` : "Hi"
   const waHref = firstWa
     ? `https://wa.me/${firstWa.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
-        `${greeting} — I just took the WBS and "${p.name}" came up as a match. Can we lock in dates?`,
+        `${greeting} — I just took the WS and "${p.name}" came up as a match. Can we lock in dates?`,
       )}`
     : null
 
@@ -426,7 +435,7 @@ function MatchedCard({
         <div style={{ position: "absolute", top: 12, left: 12, display: "flex", gap: 6 }}>
           {cohort && (
             <span className="tag" style={{ background: "rgba(255,255,255,.92)", color: "var(--ink)" }}>
-              {cohort.name}
+              {cohort.fullName}
             </span>
           )}
           {p.tier && (
@@ -443,7 +452,7 @@ function MatchedCard({
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <span className="body-sm">{p.duration_days} days</span>
-          <span style={{ fontWeight: 600, color: "var(--ink)" }}>from ${Number(minPrice).toLocaleString()}</span>
+          <span style={{ fontWeight: 600, color: "var(--ink)" }}>from ${Number(minPrice).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
         </div>
         <div style={{ display: "grid", gap: 8, marginTop: "auto" }}>
           {reserved ? (
