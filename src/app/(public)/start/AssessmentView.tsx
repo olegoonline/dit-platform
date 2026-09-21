@@ -137,7 +137,7 @@ export default function AssessmentView() {
 
   return (
     <div className="page" style={{ minHeight: "100svh", display: "flex", flexDirection: "column" }}>
-      <div style={{ padding: "16px var(--pad) 14px", maxWidth: 560, width: "100%", margin: "0 auto" }}>
+      <div className="shell" style={{ paddingTop: 16, paddingBottom: 14 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div style={{ flex: 1 }}>
             <div className="eyebrow" style={{ marginBottom: 6 }}>Wellbeing &amp; Wellness Score (WS)</div>
@@ -145,14 +145,15 @@ export default function AssessmentView() {
               style={{
                 height: 6,
                 borderRadius: 6,
-                background: "rgba(211,210,210,.18)",
+                background: "var(--surface-2)",
                 overflow: "hidden",
+                border: "1px solid var(--line-2)",
               }}
             >
               <div
                 style={{
                   height: "100%",
-                  width: `max(${progress * 100}%, 6px)`,
+                  width: `${progress * 100}%`,
                   background: "var(--accent)",
                   transition: "width .35s ease",
                   borderRadius: 6,
@@ -251,8 +252,22 @@ export default function AssessmentView() {
                         <button
                           key={opt.value}
                           type="button"
-                          className="ws-option"
                           onClick={() => pickAnswer(opt.value)}
+                          style={{
+                            padding: "14px 18px",
+                            background: "var(--accent)",
+                            color: "var(--accent-ink)",
+                            borderRadius: "var(--r-pill)",
+                            fontSize: 15,
+                            fontWeight: 500,
+                            textAlign: "center",
+                            transition: "transform .15s, background .2s",
+                            border: 0,
+                            cursor: "pointer",
+                          }}
+                          onMouseDown={(e) => (e.currentTarget.style.transform = "scale(.97)")}
+                          onMouseUp={(e) => (e.currentTarget.style.transform = "")}
+                          onMouseLeave={(e) => (e.currentTarget.style.transform = "")}
                         >
                           {opt.label}
                         </button>
