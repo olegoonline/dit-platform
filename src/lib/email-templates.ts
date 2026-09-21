@@ -74,6 +74,31 @@ export function bookingInquiry(args: {
   return { subject, html, text }
 }
 
+// ─── availability / pricing request (ReserveModal fallback — no priced variant) ──
+export function availabilityRequest(args: {
+  guestName: string
+  guestContact: string
+  programName: string
+  propertyName: string | null
+  arrival: string | null
+  pax: number
+  sourcePage: string | null
+  adminBookingUrl: string
+}) {
+  const subject = `🔎 Availability request: ${args.programName} — ${args.guestName}`
+  const html = layout(
+    "New availability & pricing request",
+    `<p>This program has no live bookable price yet — the guest was shown "Request availability and pricing" instead of checkout.</p>
+     <p><strong>Guest:</strong> ${escape(args.guestName)} (${escape(args.guestContact)})</p>
+     <p><strong>Program:</strong> ${escape(args.programName)}${args.propertyName ? ` @ ${escape(args.propertyName)}` : ""}</p>
+     <p><strong>Preferred arrival:</strong> ${args.arrival ? escape(args.arrival) : "—"} · ${args.pax} pax</p>
+     ${args.sourcePage ? `<p><strong>Source page:</strong> ${escape(args.sourcePage)}</p>` : ""}
+     <p>${btn("Open in admin", args.adminBookingUrl)}</p>`,
+  )
+  const text = `Availability request — ${args.programName}\n${args.guestName} (${args.guestContact})\nArrival: ${args.arrival ?? "—"} · ${args.pax} pax\n${args.sourcePage ? `Source: ${args.sourcePage}\n` : ""}${args.adminBookingUrl}`
+  return { subject, html, text }
+}
+
 // ─── booking status transitions (3.7) ────────────────────
 export function bookingConfirmed(args: {
   guestName: string | null
