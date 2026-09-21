@@ -101,8 +101,8 @@ export default function TopNav({ programs = [] }: { programs?: { id: string; nam
         </button>
         <div className="topnav-actions" style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <AccountButton />
-          <Link href="/start" className="btn btn-primary topnav-cta" title="Wellbeing & Wellness Score — 2 minutes">
-            Get your WS
+          <Link href="/start" className="btn btn-primary topnav-cta">
+            Take Assessment
           </Link>
         </div>
       </div>

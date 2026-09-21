@@ -597,7 +597,7 @@ export default async function HomeView({ programs, reviews }: { programs: Landin
             marginTop: 48,
           }}
         >
-          <div className="promise-flower" style={{ position: "absolute", top: -40, right: -40, opacity: 0.25, pointerEvents: "none" }}>
+          <div style={{ position: "absolute", top: -40, right: -40, opacity: 0.25, pointerEvents: "none" }}>
             <Icon.flower width={200} height={200} />
           </div>
           <div className="eyebrow" style={{ color: "rgba(20,32,27,.7)", position: "relative" }}>
@@ -655,7 +655,6 @@ export default async function HomeView({ programs, reviews }: { programs: Landin
         }
         @media (max-width: 599px) {
           .partner-logo { width: calc(50% - 8px); height: 76px; }
-          .promise-flower { top: -90px !important; right: -90px !important; opacity: .14 !important; }
         }
         .traction-grid {
           display: grid;
