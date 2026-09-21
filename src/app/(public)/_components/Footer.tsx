@@ -6,10 +6,14 @@ import { Icon } from "./Icon"
 import { TRACKS } from "../_lib/programMapping"
 import { countryFromSlug, countrySlug } from "../_lib/countries"
 
+// Partners and staff sign in on the panel host, not the public site.
+const PANEL_LOGIN_URL = `${(process.env.NEXT_PUBLIC_PANEL_SITE_URL || "https://panel.dreamislands.org").replace(/\/$/, "")}/login`
+
 const COMPANY_LINKS = [
   { href: "/about", label: "About" },
   { href: "/start", label: "Get your WS" },
   { href: "mailto:hello@dreamislands.org", label: "Press kit", external: true },
+  { href: PANEL_LOGIN_URL, label: "Partner login", external: true },
 ]
 const CONTACT_LINKS = [
   { href: "https://wa.me/message/HOF2AFIBDYY5J1", label: "WhatsApp consult", external: true },
